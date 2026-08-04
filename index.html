@@ -475,6 +475,8 @@
     </div>
 
     <script>
+        const ADMIN_EMAIL = "osmikdesiyor66@gmail.com";
+
         let currentUser = null;
         let selectedListingImages = [];
         let activeChatId = null;
@@ -488,7 +490,7 @@
         };
 
         let users = JSON.parse(localStorage.getItem("pazar_users")) || [
-            { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı", isBanned: false },
+            { name: "Admin Sistem", email: ADMIN_EMAIL, phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı", isBanned: false },
             { name: "sferpKFNSDLKKf", email: "ksdvho@GALKKKEOI", phone: "KKSDHVPISDUfgh", iban: "osidifFWPDIUfhed", regDate: "10.05.2026", isPremium: false, premiumStatus: "Normal", isBanned: false }
         ];
 
@@ -497,7 +499,7 @@
                 id: 1,
                 listingId: 1,
                 listingTitle: "2020 Model Hatasız Aile Sedanı",
-                ownerEmail: "admin@pazarsepeti.com",
+                ownerEmail: ADMIN_EMAIL,
                 senderEmail: "ksdvho@GALKKKEOI",
                 senderName: "sferpKFNSDLKKf",
                 messages: [
@@ -511,7 +513,7 @@
                 id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", 
                 iban: "TR33 0006 1005 5000 0000 0000 01",
                 location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, 
-                user: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000",
+                user: "Admin Sistem", email: ADMIN_EMAIL, phone: "05000000000",
                 views: 42, 
                 carDetails: { year: "2020", km: "75.000", gear: "Otomatik", fuel: "Dizel", hp: "136", engine: "1598 cc", body: "Sedan", color: "Beyaz" },
                 parts: {
@@ -578,6 +580,11 @@
                 document.getElementById('navContact').classList.add('active');
                 renderChatList();
             } else if (viewName === 'admin') {
+                if (!currentUser || currentUser.email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                    alert("Bu alana yalnızca admin erişebilir!");
+                    switchView('home');
+                    return;
+                }
                 document.getElementById('viewAdmin').classList.add('active');
                 document.getElementById('navAdmin').classList.add('active');
                 renderAdminPanelData();
@@ -599,7 +606,9 @@
             const newUser = {
                 name, email, phone, iban,
                 regDate: new Date().toLocaleDateString('tr-TR'),
-                isPremium: false, premiumStatus: "Normal", isBanned: false
+                isPremium: email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase(), 
+                premiumStatus: email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase() ? "Onaylı" : "Normal", 
+                isBanned: false
             };
             users.push(newUser);
             currentUser = newUser;
@@ -611,13 +620,21 @@
 
         function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById("loginEmail").value;
+            const email = document.getElementById("loginEmail").value.trim().toLowerCase();
 
-            const existingUser = users.find(u => u.email === email);
+            let existingUser = users.find(u => u.email.trim().toLowerCase() === email);
             if (!existingUser) {
-                alert("Bu e-posta ile kayıtlı kullanıcı bulunamadı! Lütfen önce Kayıt Olun.");
-                switchAuthTab('register');
-                return;
+                if (email === ADMIN_EMAIL.toLowerCase()) {
+                    existingUser = {
+                        name: "Admin Sistem", email: ADMIN_EMAIL, phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı", isBanned: false
+                    };
+                    users.push(existingUser);
+                    saveData();
+                } else {
+                    alert("Bu e-posta ile kayıtlı kullanıcı bulunamadı! Lütfen önce Kayıt Olun.");
+                    switchAuthTab('register');
+                    return;
+                }
             }
 
             if (existingUser.isBanned) {
@@ -644,7 +661,7 @@
             const adminNav = document.getElementById("navAdmin");
 
             if (currentUser) {
-                if (currentUser.email === "admin@pazarsepeti.com") {
+                if (currentUser.email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                     adminNav.style.display = "inline-block";
                 } else {
                     adminNav.style.display = "none";
@@ -1147,7 +1164,7 @@
         function toggleUserBan(email) {
             const targetUser = users.find(u => u.email === email);
             if (!targetUser) return;
-            if (targetUser.email === "admin@pazarsepeti.com") {
+            if (targetUser.email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
                 alert("Ana yönetici hesabı banlanamaz!");
                 return;
             }
@@ -1181,7 +1198,7 @@
                         <td>${u.iban || '-'}</td>
                         <td><span style="color:${u.isBanned ? '#ef4444' : '#10b981'}; font-weight:bold;">${u.isBanned ? 'Banlı' : u.premiumStatus}</span></td>
                         <td>
-                            ${u.email !== 'admin@pazarsepeti.com' ? `<button class="btn-danger" onclick="toggleUserBan('${u.email}')">${u.isBanned ? 'Engeli Kaldır' : 'Banla'}</button>` : 'Sistem'}
+                            ${u.email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase() ? `<button class="btn-danger" onclick="toggleUserBan('${u.email}')">${u.isBanned ? 'Engeli Kaldır' : 'Banla'}</button>` : 'Sistem'}
                         </td>
                     </tr>
                 `;
@@ -1356,7 +1373,7 @@
         function handleSearch(value) {
             searchQuery = value;
             if (value.trim().toLowerCase() === "admin") {
-                if (!currentUser || currentUser.email !== "admin@pazarsepeti.com") {
+                if (!currentUser || currentUser.email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
                     alert("Admin paneline erişmek için admin hesabıyla giriş yapmalısınız!");
                     return;
                 }
