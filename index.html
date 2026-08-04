@@ -110,7 +110,6 @@
         .detail-gallery img { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
         .seller-card { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-top: 1rem; }
 
-        /* Sohbet Listesi ve Arayüzü */
         .chat-list-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; cursor: pointer; transition: background 0.2s; }
         .chat-list-item:hover { background: #edf2f7; }
         .chat-list-item.unread { border-left: 4px solid var(--accent); background: #fffdf9; }
@@ -270,37 +269,28 @@
 
     <!-- İÇERİK GÖRÜNÜMLERİ -->
     <div class="main-container">
-        
-        <!-- ANA SAYFA -->
         <div id="viewHome" class="section-view active">
             <h2 style="margin-bottom: 1.5rem;">Güncel İlanlar</h2>
             <div class="listings-grid" id="listingsGrid"></div>
         </div>
 
-        <!-- İLANLARIM -->
         <div id="viewMyListings" class="section-view">
             <h2 style="margin-bottom: 1.5rem;">Benim Eklediğim İlanlar</h2>
             <div class="listings-grid" id="myListingsGrid"></div>
         </div>
 
-        <!-- FAVORİLERİM -->
         <div id="viewFavorites" class="section-view">
             <h2 style="margin-bottom: 1.5rem;">Favori İlanlarım</h2>
             <div class="listings-grid" id="favoritesGrid"></div>
         </div>
 
-        <!-- İLETİŞİM & SOHBET MERKEZİ -->
         <div id="viewContact" class="section-view">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                
-                <!-- Sol Taraf: Sohbet Listesi -->
                 <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border);">
                     <h2 style="color:var(--primary); margin-bottom:0.5rem; font-size:1.2rem;">💬 İlan Sohbetlerim</h2>
                     <p style="color:var(--text-muted); margin-bottom:1rem; font-size:0.85rem;">Bir sohbete dokunarak mesajları okuyabilir ve yanıt yazabilirsiniz.</p>
                     <div id="chatListContainer" style="max-height: 450px; overflow-y: auto;"></div>
                 </div>
-
-                <!-- Sağ Taraf: Canlı Sohbet Penceresi -->
                 <div>
                     <div id="activeChatContainer">
                         <div style="background:white; padding:3rem; border-radius:12px; border:1px solid var(--border); text-align:center; color:var(--text-muted);">
@@ -309,24 +299,24 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-
     </div>
 
     <script>
         let currentUser = null;
         let selectedListingImages = [];
-        let favorites = [];
         let activeChatId = null;
+        let searchQuery = "";
+
+        // localStorage'dan verileri çek (yoksa varsayılan başlangıç verilerini kullan)
+        let favorites = JSON.parse(localStorage.getItem("pazar_favorites")) || [];
         
-        let users = [
+        let users = JSON.parse(localStorage.getItem("pazar_users")) || [
             { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı" }
         ];
 
-        // Sohbetler Sistemi (Sohbet geçmişi ve mesajlar)
-        let chats = [
+        let chats = JSON.parse(localStorage.getItem("pazar_chats")) || [
             {
                 id: 1,
                 listingId: 1,
@@ -340,6 +330,20 @@
             }
         ];
 
+        let listings = JSON.parse(localStorage.getItem("pazar_listings")) || [
+            { 
+                id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", 
+                location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, 
+                user: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005",
+                views: 42, parts: {
+                    "Sol Ön Çamurluk": "Orijinal", "Ön Kaput": "Orijinal", "Sağ Ön Çamurluk": "Orijinal",
+                    "Sol Ön Kapı": "Orijinal", "Tavan": "Orijinal", "Sağ Ön Kapı": "Orijinal",
+                    "Sol Arka Kapı": "Orijinal", "Bagaj Kapağı": "Orijinal", "Sağ Arka Kapı": "Orijinal",
+                    "Sol Arka Çamurluk": "Orijinal", "Sağ Arka Çamurluk": "Orijinal"
+                }, images: ["https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400"] 
+            }
+        ];
+
         let carPartsStatus = {
             "Sol Ön Çamurluk": "Orijinal", "Ön Kaput": "Orijinal", "Sağ Ön Çamurluk": "Orijinal",
             "Sol Ön Kapı": "Orijinal", "Tavan": "Orijinal", "Sağ Ön Kapı": "Orijinal",
@@ -347,16 +351,13 @@
             "Sol Arka Çamurluk": "Orijinal", "Sağ Arka Çamurluk": "Orijinal"
         };
 
-        let listings = [
-            { 
-                id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", 
-                location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, 
-                user: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005",
-                views: 42, parts: {...carPartsStatus}, images: ["https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400"] 
-            }
-        ];
-
-        let searchQuery = "";
+        // Verileri localStorage'a kaydetme yardımcı fonksiyonları
+        function saveData() {
+            localStorage.setItem("pazar_listings", JSON.stringify(listings));
+            localStorage.setItem("pazar_users", JSON.stringify(users));
+            localStorage.setItem("pazar_favorites", JSON.stringify(favorites));
+            localStorage.setItem("pazar_chats", JSON.stringify(chats));
+        }
 
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
@@ -419,6 +420,7 @@
             };
             users.push(newUser);
             currentUser = newUser;
+            saveData();
             closeModal('auth-modal');
             updateHeaderUserUI();
             alert("Kayıt başarıyla oluşturuldu ve giriş yapıldı!");
@@ -562,6 +564,7 @@
             }
             currentUser.isPremium = true;
             currentUser.premiumStatus = "Onaylı";
+            saveData();
             closeModal('payment-modal');
             updateHeaderUserUI();
             alert("Hesabınız ve ilanınız Premium yapıldı.");
@@ -628,6 +631,7 @@
             };
 
             listings.unshift(newListing);
+            saveData();
             closeModal('listing-modal');
             switchView('home');
             alert("İlanınız başarıyla yayınlandı!");
@@ -637,6 +641,7 @@
             event.stopPropagation();
             const index = favorites.indexOf(id);
             if (index > -1) { favorites.splice(index, 1); } else { favorites.push(id); }
+            saveData();
             renderListings(); renderFavorites();
         }
 
@@ -644,6 +649,7 @@
             const item = listings.find(l => l.id === id);
             if (!item) return;
             item.views = (item.views || 0) + 1;
+            saveData();
 
             let imagesHtml = item.images.map(img => `<img src="${img}" alt="İlan Görseli">`).join('');
             let partsHtml = "";
@@ -681,7 +687,6 @@
             openModal('detail-modal');
         }
 
-        // --- CANLI SOHBET SİSTEMİ MANTIĞI ---
         function startOrOpenChat(listingId) {
             if (!currentUser) {
                 alert("Soru sorabilmek için giriş yapmalısınız!");
@@ -701,7 +706,6 @@
                 return;
             }
 
-            // Daha önce bu kullanıcı ile bu ilan için bir sohbet açılmış mı kontrol et
             let existingChat = chats.find(c => c.listingId === item.id && c.senderEmail === currentUser.email);
 
             if (existingChat) {
@@ -727,6 +731,7 @@
                 activeChatId = newChat.id;
             }
 
+            saveData();
             closeModal('detail-modal');
             switchView('contact');
         }
@@ -738,7 +743,6 @@
 
             if (!currentUser) return;
 
-            // Kullanıcısı ya ilanın sahibi ya da mesajı atan kişidir
             const myChats = chats.filter(c => c.ownerEmail === currentUser.email || c.senderEmail === currentUser.email);
 
             if (myChats.length === 0) {
@@ -811,7 +815,6 @@
                 </div>
             `;
 
-            // Mesaj kutusunu en aşağı kaydır
             const msgBox = document.getElementById("chatMessagesBox");
             msgBox.scrollTop = msgBox.scrollHeight;
         }
@@ -829,6 +832,7 @@
                     time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
                 });
                 input.value = "";
+                saveData();
                 renderChatList();
                 renderActiveChat();
             }
@@ -838,7 +842,9 @@
             event.stopPropagation();
             if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
                 listings = listings.filter(l => l.id !== id);
-                renderListings(); renderMyListings();
+                saveData();
+                renderListings(); 
+                renderMyListings();
             }
         }
 
