@@ -27,8 +27,10 @@
         .logo span { color: var(--accent); }
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
-        .nav-link { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; }
+        .nav-link { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; position: relative; }
         .nav-link:hover, .nav-link.active { color: var(--primary); }
+        
+        .badge-counter { background: var(--accent); color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.7rem; font-weight: bold; vertical-align: top; margin-left: 3px; }
 
         .header-search { flex: 1; max-width: 300px; margin: 0 1rem; display: flex; background: #f0f2f5; border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
         .header-search input { flex: 1; border: none; padding: 0.6rem 1rem; background: transparent; font-size: 0.9rem; outline: none; }
@@ -102,11 +104,14 @@
         .listing-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.4rem; }
         .listing-footer { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 0.8rem; }
 
-        /* --- DETAY & HESAP BİLGİLERİ MODALI --- */
+        /* --- DETAY & İLETİŞİM KUTULARI --- */
         .detail-modal-box { max-width: 750px; background: white; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
         .detail-gallery { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 5px; }
         .detail-gallery img { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
         .seller-card { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+
+        .message-box-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .message-box-item.unread { border-left: 4px solid var(--accent); background: #fffdf9; }
 
         .section-view { display: none; }
         .section-view.active { display: block; }
@@ -241,7 +246,7 @@
                 <a class="nav-link active" onclick="switchView('home')" id="navHome">Ana Sayfa</a>
                 <a class="nav-link" onclick="switchView('myListings')" id="navMyListings">İlanlarım</a>
                 <a class="nav-link" onclick="switchView('favorites')" id="navFavorites">Favorilerim</a>
-                <a class="nav-link" onclick="switchView('contact')" id="navContact">İletişim</a>
+                <a class="nav-link" onclick="switchView('contact')" id="navContact">İletişim & Sorular <span class="badge-counter" id="messageBadge" style="display:none;">0</span></a>
             </nav>
 
             <div class="header-search">
@@ -276,18 +281,32 @@
             <div class="listings-grid" id="favoritesGrid"></div>
         </div>
 
-        <!-- İLETİŞİM (Geri Dönüş Yapılabilen) -->
+        <!-- İLETİŞİM & İLAN SORULARI -->
         <div id="viewContact" class="section-view">
-            <div style="background:white; padding:2rem; border-radius:12px; max-width:600px; margin:0 auto; border:1px solid var(--border);">
-                <h2 style="color:var(--primary); margin-bottom:1rem;">İletişim ve Destek</h2>
-                <p style="color:var(--text-muted); margin-bottom:1.5rem;">Bizimle iletişime geçin, ekibimiz en kısa sürede size geri dönüş yapacaktır.</p>
-                <form onsubmit="handleContactSubmit(event)">
-                    <div class="form-group"><label>Ad Soyad</label><input type="text" id="contactName" required placeholder="Adınız"></div>
-                    <div class="form-group"><label>E-posta Adresiniz (Geri dönüş için)</label><input type="email" id="contactEmail" required placeholder="ornek@mail.com"></div>
-                    <div class="form-group"><label>Konu</label><input type="text" id="contactSubject" required placeholder="Konu başlığı"></div>
-                    <div class="form-group"><label>Mesajınız</label><textarea id="contactMessage" required rows="4" placeholder="Mesajınızı buraya yazın..." style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; outline:none;"></textarea></div>
-                    <button type="submit" class="btn" style="width: 100%;">Mesaj Gönder / Geri Dönüş İste</button>
-                </form>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                
+                <!-- Destek / Genel İletişim -->
+                <div style="background:white; padding:2rem; border-radius:12px; border:1px solid var(--border);">
+                    <h2 style="color:var(--primary); margin-bottom:1rem;">Genel Destek Hattı</h2>
+                    <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.9rem;">Platform yönetimine soru veya önerilerinizi iletebilirsiniz.</p>
+                    <form onsubmit="handleContactSubmit(event)">
+                        <div class="form-group"><label>Ad Soyad</label><input type="text" id="contactName" required placeholder="Adınız"></div>
+                        <div class="form-group"><label>E-posta Adresi</label><input type="email" id="contactEmail" required placeholder="ornek@mail.com"></div>
+                        <div class="form-group"><label>Konu</label><input type="text" id="contactSubject" required placeholder="Konu başlığı"></div>
+                        <div class="form-group"><label>Mesajınız</label><textarea id="contactMessage" required rows="3" placeholder="Mesajınız..." style="width:100%; padding:0.75rem; border:1px solid var(--border); border-radius:6px; outline:none;"></textarea></div>
+                        <button type="submit" class="btn" style="width: 100%;">Gönder</button>
+                    </form>
+                </div>
+
+                <!-- İlanlarımıza Gelen Sorular Listesi -->
+                <div style="background:white; padding:2rem; border-radius:12px; border:1px solid var(--border);">
+                    <h2 style="color:var(--primary); margin-bottom:1rem;">📋 İlanlarım İçin Gelen Sorular</h2>
+                    <p style="color:var(--text-muted); margin-bottom:1.5rem; font-size:0.9rem;">Kullanıcıların ilanlarınıza sorduğu sorular burada görünür.</p>
+                    <div id="incomingQuestionsContainer" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Dinamik sorular buraya gelecek -->
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -300,6 +319,10 @@
         
         let users = [
             { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı" }
+        ];
+
+        let incomingQuestions = [
+            { id: 1, listingId: 1, listingTitle: "2020 Model Hatasız Aile Sedanı", senderName: "Ahmet Yılmaz", senderEmail: "ahmet@mail.com", message: "Aracın tramer kaydı var mı acaba?", ownerEmail: "admin@pazarsepeti.com", date: "04.08.2026", isRead: false }
         ];
 
         let carPartsStatus = {
@@ -357,6 +380,7 @@
             } else if (viewName === 'contact') {
                 document.getElementById('viewContact').classList.add('active');
                 document.getElementById('navContact').classList.add('active');
+                renderIncomingQuestions();
             }
         }
 
@@ -381,6 +405,7 @@
             currentUser = newUser;
             closeModal('auth-modal');
             updateHeaderUserUI();
+            renderIncomingQuestions();
             alert("Kayıt başarıyla oluşturuldu ve giriş yapıldı!");
         }
 
@@ -398,12 +423,14 @@
             currentUser = existingUser;
             closeModal('auth-modal');
             updateHeaderUserUI();
+            renderIncomingQuestions();
             alert("Giriş yapıldı!");
         }
 
         function handleLogout() {
             currentUser = null;
             updateHeaderUserUI();
+            renderIncomingQuestions();
             switchView('home');
             alert("Hesaptan çıkış yapıldı. İlanlarınız sistemde saklanmaya devam etmektedir.");
         }
@@ -448,7 +475,7 @@
         function openAccountInfo() {
             if (!currentUser) return;
             const myList = listings.filter(l => l.email === currentUser.email);
-            const totalViews = myList.reduce((sum, item) => sum + (item.views || 0), des = 0);
+            const totalViews = myList.reduce((sum, item) => sum + (item.views || 0), 0);
 
             document.getElementById("accountInfoContent").innerHTML = `
                 <p><strong>Ad Soyad:</strong> ${currentUser.name}</p>
@@ -603,7 +630,7 @@
         function openDetailModal(id) {
             const item = listings.find(l => l.id === id);
             if (!item) return;
-            item.views = (item.views || 0) + 1; // Ziyaretçi sayısını artır
+            item.views = (item.views || 0) + 1;
 
             let imagesHtml = item.images.map(img => `<img src="${img}" alt="İlan Görseli">`).join('');
             let partsHtml = "";
@@ -631,10 +658,93 @@
                     <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>İlan Sahibi:</strong> ${item.user}</p>
                     <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>Telefon:</strong> <a href="tel:${item.phone}">${item.phone || 'Belirtilmemiş'}</a></p>
                     <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>E-posta:</strong> ${item.email}</p>
-                    <p style="font-size:0.85rem;"><strong>IBAN:</strong> ${item.iban || 'Belirtilmemiş'}</p>
+                    <p style="font-size:0.85rem; margin-bottom:1rem;"><strong>IBAN:</strong> ${item.iban || 'Belirtilmemiş'}</p>
+                    
+                    <div style="border-top:1px dashed var(--border); padding-top:1rem;">
+                        <h4 style="font-size:0.9rem; margin-bottom:0.5rem; color:var(--primary);">💬 Bu İlan İçin Soru Sor</h4>
+                        <div class="form-group"><input type="text" id="questionSenderName" placeholder="Adınız Soyadınız" style="padding:0.5rem; font-size:0.85rem;"></div>
+                        <div class="form-group"><input type="email" id="questionSenderEmail" placeholder="E-posta adresiniz" style="padding:0.5rem; font-size:0.85rem;"></div>
+                        <div class="form-group"><textarea id="questionText" placeholder="Satıcıya soru sorun..." rows="2" style="width:100%; padding:0.5rem; font-size:0.85rem; border:1px solid var(--border); border-radius:6px; outline:none;"></textarea></div>
+                        <button class="btn btn-accent" style="padding:0.5rem 1rem; font-size:0.85rem;" onclick="sendListingQuestion(${item.id})">Soruyu Gönder</button>
+                    </div>
                 </div>
             `;
             openModal('detail-modal');
+        }
+
+        function sendListingQuestion(listingId) {
+            const item = listings.find(l => l.id === listingId);
+            const name = document.getElementById("questionSenderName").value;
+            const email = document.getElementById("questionSenderEmail").value;
+            const msg = document.getElementById("questionText").value;
+
+            if (!name || !email || !msg) {
+                alert("Lütfen tüm alanları doldurun!");
+                return;
+            }
+
+            const newQ = {
+                id: Date.now(),
+                listingId: item.id,
+                listingTitle: item.title,
+                senderName: name,
+                senderEmail: email,
+                message: msg,
+                ownerEmail: item.email,
+                date: new Date().toLocaleDateString('tr-TR'),
+                isRead: false
+            };
+
+            incomingQuestions.unshift(newQ);
+            alert("Sorunuz ilan sahibine başarıyla iletildi!");
+            closeModal('detail-modal');
+        }
+
+        function renderIncomingQuestions() {
+            const container = document.getElementById("incomingQuestionsContainer");
+            const badge = document.getElementById("messageBadge");
+            container.innerHTML = "";
+
+            if (!currentUser) {
+                container.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">Gelen soruları görebilmek için giriş yapmalısınız.</p>`;
+                badge.style.display = "none";
+                return;
+            }
+
+            const myQuestions = incomingQuestions.filter(q => q.ownerEmail === currentUser.email);
+            const unreadCount = myQuestions.filter(q => !q.isRead).length;
+
+            if (unreadCount > 0) {
+                badge.innerText = unreadCount;
+                badge.style.display = "inline-block";
+            } else {
+                badge.style.display = "none";
+            }
+
+            if (myQuestions.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">İlanlarınız için henüz soru sorulmamış.</p>`;
+                return;
+            }
+
+            myQuestions.forEach(q => {
+                const div = document.createElement("div");
+                div.className = `message-box-item ${!q.isRead ? 'unread' : ''}`;
+                div.innerHTML = `
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.2rem;">İlan: <strong>${q.listingTitle}</strong> (${q.date})</div>
+                    <div style="font-size:0.85rem; font-weight:bold; color:var(--primary); margin-bottom:0.3rem;">Soran: ${q.senderName} (${q.senderEmail})</div>
+                    <div style="font-size:0.9rem; background:white; padding:0.5rem; border-radius:4px; border:1px solid var(--border); margin-bottom:0.5rem;">"${q.message}"</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <a href="mailto:${q.senderEmail}?subject=İlan Sorunuz Hakkında: ${q.listingTitle}" class="btn" style="padding:0.3rem 0.6rem; font-size:0.75rem;">E-posta ile Yanıtla</a>
+                        <button onclick="markAsRead(${q.id})" style="background:none; border:none; font-size:0.75rem; color:var(--text-muted); cursor:pointer;">Okundu İşaretle</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function markAsRead(id) {
+            const q = incomingQuestions.find(item => item.id === id);
+            if (q) { q.isRead = true; renderIncomingQuestions(); }
         }
 
         function deleteMyListing(id, event) {
@@ -649,8 +759,7 @@
             event.preventDefault();
             const name = document.getElementById("contactName").value;
             const email = document.getElementById("contactEmail").value;
-            const subject = document.getElementById("contactSubject").value;
-            alert(`Sayın ${name}, mesajınız alınmıştır! En kısa sürede ${email} adresinize geri dönüş yapılacaktır.`);
+            alert(`Sayın ${name}, genel destek mesajınız alınmıştır! En kısa sürede ${email} adresinize geri dönüş yapılacaktır.`);
             event.target.reset();
             switchView('home');
         }
