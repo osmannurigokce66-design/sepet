@@ -20,11 +20,15 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); }
 
-        /* --- ÜST HEADER --- */
+        /* --- ÜST HEADER & ÖZEL LOGO --- */
         header { background-color: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
-        .header-top { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; letter-spacing: -1px; cursor: pointer; }
-        .logo span { color: var(--accent); }
+        .header-top { max-width: 1200px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
+        .site-logo-icon { width: 40px; height: 40px; background: #0f172a; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
+        .site-logo-icon svg { width: 22px; height: 22px; fill: white; }
+        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+        .logo-text span { color: var(--accent); }
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-link { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; position: relative; }
@@ -43,9 +47,9 @@
         .btn-accent:hover { background-color: #e05b00; }
         .btn-outline { background-color: transparent; border: 1px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background-color: #eff6ff; }
-        .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; }
+        .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
 
-        /* --- PROFİL AÇILIR MİNİ MENÜ --- */
+        /* --- PROFİL MİNİ MENÜ --- */
         .profile-menu-container { position: relative; display: inline-block; }
         .profile-trigger { background: #f0f4ff; border: 1px solid var(--primary); color: var(--primary); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
         
@@ -67,7 +71,7 @@
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none; }
 
-        /* --- TABLAR (GİRİŞ / KAYIT) --- */
+        /* --- TABLAR --- */
         .auth-tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); }
         .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: bold; cursor: pointer; color: var(--text-muted); }
         .auth-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; }
@@ -104,7 +108,7 @@
         .listing-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.4rem; }
         .listing-footer { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 0.8rem; }
 
-        /* --- DETAY & CHAT SİSTEMİ --- */
+        /* --- DETAY & CHAT --- */
         .detail-modal-box { max-width: 750px; background: white; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
         .detail-gallery { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 5px; }
         .detail-gallery img { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
@@ -125,13 +129,27 @@
         .chat-input-area { padding: 1rem; background: white; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
         .chat-input-area input { flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; outline: none; }
 
+        /* --- YARDIM BOTU (WIDGET) --- */
+        .bot-widget-btn { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,85,255,0.4); z-index: 4000; transition: transform 0.2s; }
+        .bot-widget-btn:hover { transform: scale(1.08); }
+        
+        .bot-window { position: fixed; bottom: 90px; right: 20px; width: 340px; height: 450px; background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; flex-direction: column; z-index: 4000; overflow: hidden; }
+        .bot-window.show { display: flex; }
+        .bot-header { background: var(--primary); color: white; padding: 1rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+        .bot-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #f8fafc; font-size: 0.85rem; }
+        .bot-bubble { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: 8px; line-height: 1.3; }
+        .bot-bubble.incoming { background: white; border: 1px solid var(--border); align-self: flex-start; color: var(--text-main); }
+        .bot-bubble.outgoing { background: var(--primary); color: white; align-self: flex-end; }
+        .bot-input-area { padding: 0.8rem; background: white; border-top: 1px solid var(--border); display: flex; gap: 5px; }
+        .bot-input-area input { flex: 1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; outline: none; }
+
         .section-view { display: none; }
         .section-view.active { display: block; }
     </style>
 </head>
 <body>
 
-    <!-- 1. GİRİŞ YAP / KAYIT OL MODALI -->
+    <!-- 1. GİRİŞ / KAYIT MODALI -->
     <div id="auth-modal" class="modal">
         <div class="modal-box">
             <button onclick="closeModal('auth-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
@@ -150,7 +168,7 @@
                 <div class="form-group"><label>Ad Soyad</label><input type="text" id="regName" required placeholder="Adınız Soyadınız"></div>
                 <div class="form-group"><label>E-posta Adresi</label><input type="email" id="regEmail" required placeholder="ornek@mail.com"></div>
                 <div class="form-group"><label>Telefon Numarası</label><input type="tel" id="regPhone" required placeholder="05XX XXX XX XX"></div>
-                <div class="form-group"><label>IBAN Numarası</label><input type="text" id="regIban" required placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
+                <div class="form-group"><label>Kişisel IBAN Numaranız (Satış için)</label><input type="text" id="regIban" required placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
                 <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Kayıt Ol ve Otomatik Giriş Yap</button>
             </form>
         </div>
@@ -188,6 +206,7 @@
 
                 <div class="form-group"><label>İlan Başlığı</label><input type="text" id="newTitle" required placeholder="Örn: Hatasız Temiz Aile Aracı"></div>
                 <div class="form-group"><label>Fiyat (TL)</label><input type="text" id="newPrice" required placeholder="Örn: 780.000 TL"></div>
+                <div class="form-group"><label>Ödeme Alınacak IBAN (Satış için)</label><input type="text" id="newIban" required placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
                 <div class="form-group"><label>Konum (Şehir / İlçe)</label><input type="text" id="newLocation" required placeholder="Örn: Ankara / Çankaya"></div>
 
                 <!-- VASITA DETAY ALANLARI -->
@@ -266,6 +285,35 @@
         </div>
     </div>
 
+    <!-- 3.B İLAN KALDIRMA (NORMAL VEYA SATILDI SEÇENEĞİ) MODALI -->
+    <div id="remove-choice-modal" class="modal">
+        <div class="modal-box" style="max-width: 450px; text-align: center;">
+            <button onclick="closeModal('remove-choice-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            <h2>İlanı Kaldır</h2>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Lütfen ilanı neden kaldırmak istediğinizi seçin:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-outline" style="padding: 0.8rem;" onclick="executeNormalRemove()">Normal İptal / Süresi Doldu</button>
+                <button class="btn btn-accent" style="padding: 0.8rem;" onclick="openSoldReceiptModal()">Satıldığı İçin İlandan Kaldırıyorum</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3.C SATIŞ DEKONT YÜKLEME MODALI -->
+    <div id="sold-receipt-modal" class="modal">
+        <div class="modal-box" style="max-width: 480px; text-align: center;">
+            <button onclick="closeModal('sold-receipt-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            <h2>🤝 Satış Teyidi ve Dekont</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Satış işleminin gerçekleştiğini doğrulamak ve paranın gönderildiğini/alındığını kanıtlamak için lütfen ödeme dekontunu yükleyin.</p>
+            
+            <div class="form-group" style="text-align: left;">
+                <label>Satış Dekontu / Transfer Kanıtı Görseli</label>
+                <input type="file" id="soldReceiptInput" accept="image/*" style="padding: 0.4rem;">
+            </div>
+            <button class="btn btn-accent" style="width: 100%; margin-top: 0.5rem;" onclick="executeSoldRemove()">Dekontu Onayla ve İlanı Kaldır</button>
+        </div>
+    </div>
+
     <!-- 4. İLAN DETAY MODALI -->
     <div id="detail-modal" class="modal">
         <div class="detail-modal-box">
@@ -283,10 +331,18 @@
         </div>
     </div>
 
-    <!-- ÜST HEADER -->
+    <!-- ÜST HEADER (YENİLENEN LOGO İLE) -->
     <header>
         <div class="header-top">
-            <a class="logo" onclick="switchView('home')">Pazar<span>Sepeti</span></a>
+            <a class="logo-container" onclick="switchView('home')">
+                <div class="site-logo-icon">
+                    <!-- Kullanıcının sağladığı mesaja ve site temasına göre optimize edilmiş logo ikonu -->
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.59 1.38 5.09L2 22l4.91-1.38C8.41 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/>
+                    </svg>
+                </div>
+                <div class="logo-text">Pazar<span>Sepeti</span></div>
+            </a>
             
             <nav class="nav-links">
                 <a class="nav-link active" onclick="switchView('home')" id="navHome">Ana Sayfa</a>
@@ -342,16 +398,33 @@
         </div>
     </div>
 
+    <!-- GERÇEK ÇALIŞAN YARDIM BOTU WIDGET -->
+    <div class="bot-widget-btn" onclick="toggleBotWindow()" title="Destek Asistanı">💬</div>
+    <div class="bot-window" id="botWindow">
+        <div class="bot-header">
+            <span>🤖 PazarSepeti Canlı Asistan</span>
+            <button onclick="toggleBotWindow()" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">✕</button>
+        </div>
+        <div class="bot-messages" id="botMessagesContainer">
+            <div class="bot-bubble incoming">Merhaba! Ben PazarSepeti Asistanıyım. İlan verme, IBAN ile ödeme, premium üyelik veya site kullanımı hakkında bana soru sorabilirsin.</div>
+        </div>
+        <div class="bot-input-area">
+            <input type="text" id="botInputText" placeholder="Sorunuzu yazın..." onkeydown="if(event.key==='Enter') sendBotMessage()">
+            <button class="btn btn-accent" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sendBotMessage()">Gönder</button>
+        </div>
+    </div>
+
     <script>
         let currentUser = null;
         let selectedListingImages = [];
         let activeChatId = null;
         let searchQuery = "";
+        let listingToDeleteId = null; // Silinecek veya satılacak geçici ilan ID
 
         let favorites = JSON.parse(localStorage.getItem("pazar_favorites")) || [];
         
         let users = JSON.parse(localStorage.getItem("pazar_users")) || [
-            { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı" }
+            { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005 5000 0000 0000 01", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı" }
         ];
 
         let chats = JSON.parse(localStorage.getItem("pazar_chats")) || [
@@ -363,7 +436,7 @@
                 senderEmail: "ahmet@mail.com",
                 senderName: "Ahmet Yılmaz",
                 messages: [
-                    { sender: "ahmet@mail.com", text: "Merhaba, aracın tramer kaydı var mı acaba?", time: "04.08.2026 12:30" }
+                    { sender: "ahmet@mail.com", text: "Merhaba, IBAN'a parayı gönderdim, dekontu paylaşıyorum.", time: "04.08.2026 12:30" }
                 ]
             }
         ];
@@ -371,8 +444,9 @@
         let listings = JSON.parse(localStorage.getItem("pazar_listings")) || [
             { 
                 id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", 
+                iban: "TR33 0006 1005 5000 0000 0000 01",
                 location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, 
-                user: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005",
+                user: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000",
                 views: 42, 
                 carDetails: { year: "2020", km: "75.000", gear: "Otomatik", fuel: "Dizel", hp: "136", engine: "1598 cc", body: "Sedan", color: "Beyaz" },
                 parts: {
@@ -536,6 +610,7 @@
                 <p><strong>Ad Soyad:</strong> ${currentUser.name}</p>
                 <p><strong>E-posta:</strong> ${currentUser.email}</p>
                 <p><strong>Telefon:</strong> ${currentUser.phone}</p>
+                <p><strong>IBAN:</strong> ${currentUser.iban || 'Belirtilmemiş'}</p>
                 <p><strong>Üyelik Tipi:</strong> ${currentUser.isPremium ? '👑 Premium Üye' : 'Standart Üye'}</p>
                 <hr style="border:0; border-top:1px solid var(--border); margin:5px 0;">
                 <p><strong>Toplam İlan Sayınız:</strong> ${myList.length} adet</p>
@@ -553,6 +628,11 @@
             selectedListingImages = [];
             document.getElementById("galleryPreviewContainer").innerHTML = "";
             document.getElementById("hiddenFileinput").value = "";
+            
+            // Otomatik kullanıcının IBAN'ını doldur
+            if (currentUser.iban) {
+                document.getElementById("newIban").value = currentUser.iban;
+            }
 
             const checkbox = document.getElementById("isPremium");
             const statusText = document.getElementById("premiumStatusText");
@@ -657,6 +737,7 @@
             const category = document.getElementById("newCategory").value;
             const title = document.getElementById("newTitle").value;
             const price = document.getElementById("newPrice").value;
+            const iban = document.getElementById("newIban").value;
             const location = document.getElementById("newLocation").value;
             const condition = document.getElementById("newCondition").value;
             const isPremium = currentUser.isPremium && document.getElementById("isPremium").checked;
@@ -678,8 +759,8 @@
             let images = selectedListingImages.length > 0 ? [...selectedListingImages] : [category === "Vasıta" ? "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400" : "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"];
 
             const newListing = {
-                id: Date.now(), title, category, price, location, condition, isPremium,
-                user: currentUser.name, email: currentUser.email, phone: currentUser.phone, iban: currentUser.iban,
+                id: Date.now(), title, category, price, iban, location, condition, isPremium,
+                user: currentUser.name, email: currentUser.email, phone: currentUser.phone,
                 views: 1, carDetails, parts: category === "Vasıta" ? {...carPartsStatus} : null, images
             };
 
@@ -744,6 +825,13 @@
                     <span>📂 Kategori: <strong>${item.category}</strong></span>
                     <span>👁️ Ziyaretçi: <strong>${item.views}</strong></span>
                 </div>
+                
+                <div style="background: #eef2ff; border: 1px solid #c7d2fe; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <strong style="color: var(--primary); display: block; margin-bottom: 0.3rem;">💳 Satış ve Ödeme Bilgileri (IBAN)</strong>
+                    <p style="font-size: 0.9rem; font-family: monospace; font-weight: bold; color: #1e1b4b; background: white; padding: 0.5rem; border-radius: 4px; border: 1px solid #e0e0e0;">${item.iban || 'Satıcı IBAN belirtmemiş'}</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">* Satın alma işlemi için yukarıdaki IBAN adresine açıklama kısmına ilan adını yazarak ödeme yapabilirsiniz.</span>
+                </div>
+
                 ${carSpecsHtml}
                 ${partsHtml}
                 <div class="seller-card">
@@ -752,9 +840,9 @@
                     <p style="font-size:0.85rem; margin-bottom:1rem;"><strong>Telefon:</strong> ${item.phone || 'Belirtilmemiş'}</p>
                     
                     <div style="border-top:1px dashed var(--border); padding-top:1rem;">
-                        <h4 style="font-size:0.9rem; margin-bottom:0.5rem; color:var(--primary);">💬 İlan Hakkında Soru Sor (Canlı Sohbet Başlat)</h4>
-                        <div class="form-group"><textarea id="questionText" placeholder="Satıcıya ilk mesajınızı yazın..." rows="2" style="width:100%; padding:0.5rem; font-size:0.85rem; border:1px solid var(--border); border-radius:6px; outline:none;"></textarea></div>
-                        <button class="btn btn-accent" style="padding:0.5rem 1rem; font-size:0.85rem;" onclick="startOrOpenChat(${item.id})">Sohbeti Başlat & Gönder</button>
+                        <h4 style="font-size:0.9rem; margin-bottom:0.5rem; color:var(--primary);">💬 İlan Hakkında Soru Sor & Dekont Paylaş</h4>
+                        <div class="form-group"><textarea id="questionText" placeholder="Örn: Merhaba, ödemeyi IBAN'ınıza yaptım, dekontu iletiyorum..." rows="2" style="width:100%; padding:0.5rem; font-size:0.85rem; border:1px solid var(--border); border-radius:6px; outline:none;"></textarea></div>
+                        <button class="btn btn-accent" style="padding:0.5rem 1rem; font-size:0.85rem;" onclick="startOrOpenChat(${item.id})">Sohbeti Başlat & Mesajı Gönder</button>
                     </div>
                 </div>
             `;
@@ -883,7 +971,7 @@
                         ${messagesHtml}
                     </div>
                     <div class="chat-input-area">
-                        <input type="text" id="chatMessageInput" placeholder="Mesajınızı yazın..." onkeydown="if(event.key==='Enter') sendChatMessage(${chat.id})">
+                        <input type="text" id="chatMessageInput" placeholder="Mesajınızı yazın veya dekont paylaşın..." onkeydown="if(event.key==='Enter') sendChatMessage(${chat.id})">
                         <button class="btn btn-accent" onclick="sendChatMessage(${chat.id})">Gönder</button>
                     </div>
                 </div>
@@ -912,14 +1000,80 @@
             }
         }
 
-        function deleteMyListing(id, event) {
+        // --- İLAN KALDIRMA VE SATIŞ SÜRECİ ---
+        function promptRemoveListing(id, event) {
             event.stopPropagation();
-            if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
-                listings = listings.filter(l => l.id !== id);
+            listingToDeleteId = id;
+            openModal('remove-choice-modal');
+        }
+
+        function executeNormalRemove() {
+            closeModal('remove-choice-modal');
+            if (confirm("Bu ilanı normal olarak kaldırmak istediğinize emin misiniz?")) {
+                listings = listings.filter(l => l.id !== listingToDeleteId);
                 saveData();
                 renderListings(); 
                 renderMyListings();
+                alert("İlan kaldırıldı.");
             }
+        }
+
+        function openSoldReceiptModal() {
+            closeModal('remove-choice-modal');
+            openModal('sold-receipt-modal');
+        }
+
+        function executeSoldRemove() {
+            const fileInput = document.getElementById("soldReceiptInput");
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Satış işlemi için lütfen ödeme dekontu / transfer görselini yükleyin!");
+                return;
+            }
+
+            listings = listings.filter(l => l.id !== listingToDeleteId);
+            saveData();
+            closeModal('sold-receipt-modal');
+            renderListings(); 
+            renderMyListings();
+            alert("Tebrikler! İlan 'Satıldı' olarak işaretlendi ve sistemden başarıyla kaldırıldı.");
+        }
+
+        // --- YARDIM BOTU MANTIĞI ---
+        function toggleBotWindow() {
+            const win = document.getElementById("botWindow");
+            win.classList.toggle("show");
+        }
+
+        function sendBotMessage() {
+            const input = document.getElementById("botInputText");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const container = document.getElementById("botMessagesContainer");
+            
+            // Kullanıcı mesajı
+            container.innerHTML += `<div class="bot-bubble outgoing">${text}</div>`;
+            input.value = "";
+            container.scrollTop = container.scrollHeight;
+
+            // Bot yanıtı hesaplama (akıllı yanıt sistemi)
+            setTimeout(() => {
+                let reply = "Bu konuda size yardımcı olabilirim. Lütfen detaylı bilgi için iletişim sayfasını kullanın veya menüden ilgili sekmeyi seçin.";
+                const lower = text.toLowerCase();
+
+                if (lower.includes("ilan") && (lower.includes("nasıl") || lower.includes("ver"))) {
+                    reply = "Üst menüden '+ İlan Ver' butonuna tıklayarak kategori seçip kolayca ilan yayınlayabilirsiniz.";
+                } else if (lower.includes("iban") || lower.includes("para") || lower.includes("satış")) {
+                    reply = "Satışlar için ilanlara IBAN eklenmektedir. Alıcı satıcının IBAN'ına gönderim yapar, ardından 'İlanı Kaldır' menüsünden 'Satıldı' seçilerek dekont ibraz edilir.";
+                } else if (lower.includes("premium") || lower.includes("ücret")) {
+                    reply = "Premium ilanlar yıllık 50 TL'dir. İlan verirken 'Premium İlan Yap' kutucuğunu işaretleyerek havale dekontuyla hesabınızı yükseltebilirsiniz.";
+                } else if (lower.includes("merhaba") || lower.includes("selam")) {
+                    reply = "Merhaba! PazarSepeti destek hattına hoş geldiniz. Size nasıl yardımcı olabilirim?";
+                }
+
+                container.innerHTML += `<div class="bot-bubble incoming">${reply}</div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 500);
         }
 
         function renderListings() {
@@ -970,7 +1124,7 @@
                 card.onclick = () => openDetailModal(item.id);
 
                 card.innerHTML = `
-                    <button class="btn-danger" onclick="deleteMyListing(${item.id}, event)" style="position:absolute; top:10px; right:10px; z-index:10;">İlanı Kaldır</button>
+                    <button class="btn-danger" onclick="promptRemoveListing(${item.id}, event)" style="position:absolute; top:10px; right:10px; z-index:10;">İlanı Kaldır</button>
                     <img src="${item.images[0]}" alt="${item.title}">
                     <div class="listing-body">
                         <div class="listing-title">${item.title}</div>
