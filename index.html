@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PazarSepeti - Güvenin ve İlanın Yeni Adresi</title>
+    <title>PazarSepeti - Gelişmiş İlan ve Premium Platform</title>
     <style>
         :root {
             --primary: #0055ff;
             --primary-hover: #0040cc;
             --accent: #ff6600;
+            --premium-gold: #f59e0b;
             --bg-main: #f4f6f8;
             --card-bg: #ffffff;
             --text-main: #333333;
@@ -46,12 +47,6 @@
             align-items: center;
         }
 
-        .logo-area {
-            display: flex;
-            align-items: baseline;
-            gap: 0.5rem;
-        }
-
         .logo {
             font-size: 1.8rem;
             font-weight: 800;
@@ -60,13 +55,11 @@
             letter-spacing: -1px;
         }
 
-        .logo span {
-            color: var(--accent);
-        }
+        .logo span { color: var(--accent); }
 
         .header-search {
             flex: 1;
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 2rem;
             display: flex;
             background: #f0f2f5;
@@ -84,199 +77,154 @@
             outline: none;
         }
 
-        .header-search button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0 1.5rem;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
         .header-actions {
             display: flex;
             gap: 1rem;
             align-items: center;
         }
 
-        .btn-ilan-ver {
-            background-color: var(--accent);
+        .btn {
+            background-color: var(--primary);
             color: white;
-            padding: 0.7rem 1.2rem;
+            border: none;
+            padding: 0.6rem 1.2rem;
             border-radius: 6px;
-            text-decoration: none;
+            cursor: pointer;
             font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        .btn-ilan-ver:hover {
-            background-color: #e05b00;
-        }
-
-        /* --- KATEGORİ ÇUBUĞU --- */
-        .sub-nav {
-            background: #ffffff;
-            border-bottom: 1px solid var(--border);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .categories-bar {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            gap: 1.5rem;
-            padding: 0.75rem 1.5rem;
-            list-style: none;
-            overflow-x: auto;
-        }
-
-        .categories-bar li a {
             text-decoration: none;
-            color: var(--text-main);
             font-size: 0.9rem;
-            font-weight: 500;
-            white-space: nowrap;
-            transition: color 0.2s;
         }
 
-        .categories-bar li a:hover, .categories-bar li a.active {
-            color: var(--primary);
-            font-weight: 700;
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-accent { background-color: var(--accent); }
+        .btn-accent:hover { background-color: #e05b00; }
+
+        /* --- GİRİŞ EKRANI MODALI --- */
+        #auth-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
         }
+
+        .modal-box {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal-box h2 { margin-bottom: 1.5rem; color: var(--primary); text-align: center; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none;
+        }
+
+        /* --- İLAN VERME EKRANI MODALI --- */
+        #listing-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            overflow-y: auto;
+            padding: 2rem 0;
+        }
+
+        .listing-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Vasıta Ekspertiz Şeması (Parçalara Ayrılmış Araç) */
+        .car-expert-container {
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .car-part-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 0.6rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .car-part-btn.selected-orijinal { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
+        .car-part-btn.selected-boyali { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
+        .car-part-btn.selected-degisen { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
 
         /* --- ANA İÇERİK --- */
         .main-container {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 0 1.5rem;
+        }
+
+        .listings-grid {
             display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 2rem;
-        }
-
-        /* Sol Filtre Paneli */
-        .filter-sidebar {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            height: fit-content;
-        }
-
-        .filter-sidebar h3 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--primary);
-        }
-
-        .filter-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .filter-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 0.4rem;
-        }
-
-        .filter-group select, .filter-group input {
-            width: 100%;
-            padding: 0.6rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            outline: none;
-            font-size: 0.9rem;
-        }
-
-        /* Sağ İlan Alanı */
-        .content-area {
-            display: flex;
-            flex-direction: column;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 1rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-        }
-
-        .section-header h2 {
-            font-size: 1.2rem;
-            color: var(--text-main);
-        }
-
-        /* İlan Listesi (Klasik Sahibinden Tarzı Dikey Akış & Grid) */
-        .listings-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .listing-row-card {
+        .listing-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            display: flex;
             overflow: hidden;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .listing-row-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border-color: var(--primary);
-        }
-
-        .listing-img-box {
-            width: 220px;
-            height: 150px;
-            background: #ddd;
+            transition: transform 0.2s;
             position: relative;
-            flex-shrink: 0;
         }
 
-        .listing-img-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .listing-card.premium {
+            border: 2px solid var(--premium-gold);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
         }
 
-        .listing-details {
-            padding: 1rem;
-            flex: 1;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .premium-badge {
+            position: absolute;
+            top: 10px; right: 10px;
+            background: var(--premium-gold);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            z-index: 10;
         }
 
-        .listing-info h4 {
-            font-size: 1.05rem;
-            color: var(--text-main);
-            margin-bottom: 0.4rem;
-        }
-
-        .listing-location-date {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        .listing-price-box {
-            text-align: right;
-        }
-
-        .listing-price {
-            font-size: 1.3rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 0.3rem;
-        }
+        .listing-card img { width: 100%; height: 160px; object-fit: cover; }
+        .listing-body { padding: 1rem; }
+        .listing-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .listing-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.4rem; }
+        .listing-footer { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 0.8rem; }
 
         /* --- YÖNETİM PANELİ --- */
         #admin-panel {
@@ -289,214 +237,316 @@
             border-radius: 12px;
         }
 
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        .admin-table th, .admin-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #374151;
-            font-size: 0.9rem;
-        }
-
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            padding: 0.4rem 0.8rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-            .header-search {
-                display: none;
-            }
-            .listing-row-card {
-                flex-direction: column;
-            }
-            .listing-img-box {
-                width: 100%;
-                height: 180px;
-            }
-            .listing-details {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-            .listing-price-box {
-                text-align: left;
-            }
-        }
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        .admin-table th, .admin-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #374151; font-size: 0.9rem; }
+        .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <!-- Üst Başlık ve Arama -->
-    <header>
-        <div class="header-top">
-            <div class="logo-area">
-                <a href="#" class="logo">Pazar<span>Sepeti</span></a>
+    <!-- 1. GİRİŞ EKRANI (Zorunlu) -->
+    <div id="auth-modal">
+        <div class="modal-box">
+            <h2>PazarSepeti Giriş</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; text-align: center;">Devam etmek için lütfen bilgilerinizi giriniz (Ödemeler IBAN üzerinden alınacaktır).</p>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Ad Soyad</label>
+                    <input type="text" id="loginName" required placeholder="Adınız Soyadınız">
+                </div>
+                <div class="form-group">
+                    <label>E-posta Adresi</label>
+                    <input type="email" id="loginEmail" required placeholder="ornek@mail.com">
+                </div>
+                <div class="form-group">
+                    <label>Telefon Numarası</label>
+                    <input type="tel" id="loginPhone" required placeholder="05XX XXX XX XX">
+                </div>
+                <div class="form-group">
+                    <label>IBAN Numarası (Ödemeler/İadeler İçin)</label>
+                    <input type="text" id="loginIban" required placeholder="TR00 0000 0000 0000 0000 0000 00">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Giriş Yap ve Devam Et</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 2. İLAN VERME MODALI -->
+    <div id="listing-modal">
+        <div class="listing-box">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Yeni İlan Oluştur</h2>
+                <button onclick="closeListingModal()" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
             </div>
             
+            <form onsubmit="saveListing(event)">
+                <div class="form-group">
+                    <label>Kategori Seçin</label>
+                    <select id="newCategory" onchange="toggleCategoryFields(this.value)" required>
+                        <option value="">-- Kategori Seçiniz --</option>
+                        <option value="Vasıta">Vasıta</option>
+                        <option value="Ev Eşyası">Ev Eşyası</option>
+                        <option value="Elektronik">Elektronik</option>
+                        <option value="Emlak">Emlak</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>İlan Başlığı</label>
+                    <input type="text" id="newTitle" required placeholder="Örn: Hatasız Temiz Aile Aracı / L Koltuk Takımı">
+                </div>
+
+                <div class="form-group">
+                    <label>Fiyat (TL)</label>
+                    <input type="text" id="newPrice" required placeholder="Örn: 450.000 TL">
+                </div>
+
+                <div class="form-group">
+                    <label>Konum (Şehir / İlçe)</label>
+                    <input type="text" id="newLocation" required placeholder="Örn: İstanbul / Kadıköy">
+                </div>
+
+                <!-- VASITA ÖZEL: 3D Parçalara Ayrılmış Araç Ekspertiz Şeması -->
+                <div id="vasitaFields" style="display: none;">
+                    <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">🚗 Araç Parça Ekspertiz Şeması</label>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Aşağıdaki araç parçalarına tıklayarak durumlarını (Orijinal / Boyalı / Değişen) belirleyebilirsiniz:</p>
+                    
+                    <div class="car-expert-container">
+                        <div style="font-weight: bold; font-size: 0.85rem; margin-bottom: 0.3rem;">Parçaya Tıklayarak Durum Değiştirin:</div>
+                        <div class="car-grid" id="carPartsGrid">
+                            <!-- JS ile üretilecek -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Ürün Durumu / Açıklama</label>
+                    <input type="text" id="newCondition" placeholder="Örn: İkinci El, Temiz, Garantili vb.">
+                </div>
+
+                <!-- PREMİUM ÜYELİK VE IBAN ÖDEME ALANI -->
+                <div style="background: #fffbeb; border: 1px solid #fef3c7; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: bold; color: #b45309;">
+                        <input type="checkbox" id="isPremium" onchange="toggleIbanPayment(this.checked)" style="width: 18px; height: 18px;">
+                        👑 Premium İlan Yap (Süresiz Kalır & En Üstte Öne Çıkar)
+                    </label>
+                    <div id="ibanPaymentArea" style="display: none; margin-top: 0.8rem; font-size: 0.85rem; color: #78350f;">
+                        <p><strong>Ödeme Bilgisi:</strong> Premium ilan bedeli kayıtlı IBAN'ınız üzerinden tahsil edilecektir.</p>
+                        <p style="margin-top: 0.3rem; font-family: monospace; background: white; padding: 0.4rem; border: 1px solid #fde68a;">Ödeme Yapılacak / Kullanılan IBAN: <span id="displayUserIban" style="font-weight: bold; color: var(--primary);"></span></p>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-accent" style="width: 100%; padding: 0.8rem;">İlanı Yayınla</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ÜST HEADER VE LİSTELER -->
+    <header>
+        <div class="header-top">
+            <a href="#" class="logo">Pazar<span>Sepeti</span></a>
+            
             <div class="header-search">
-                <!-- Arama kutusuna "admin" yazarsanız yönetim paneli açılır -->
-                <input type="text" id="searchInput" placeholder="Kelime, ilan no veya mağaza ara (Admin için 'admin' yazın)..." oninput="handleSearch(this.value)">
-                <button onclick="filterListings()">Ara</button>
+                <!-- Arama çubuğu (Gizli admin kelimesi tetikleyicisi) -->
+                <input type="text" id="searchInput" placeholder="İlan ara..." oninput="handleSearch(this.value)">
             </div>
 
             <div class="header-actions">
-                <a href="#" class="btn-ilan-ver" onclick="alert('İlan verme paneline yönlendiriliyorsunuz.')">+ Ücretsiz İlan Ver</a>
+                <span id="welcomeUserText" style="font-size: 0.85rem; font-weight: 600;"></span>
+                <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
             </div>
         </div>
-
-        <!-- Üst Kategori Çubuğu -->
-        <nav class="sub-nav">
-            <ul class="categories-bar">
-                <li><a href="#" class="active" onclick="filterCategory('Tümü', this)">Tüm Kategoriler</a></li>
-                <li><a href="#" onclick="filterCategory('Emlak', this)">Emlak</a></li>
-                <li><a href="#" onclick="filterCategory('Vasıta', this)">Vasıta</a></li>
-                <li><a href="#" onclick="filterCategory('Yedek Parça', this)">Yedek Parça</a></li>
-                <li><a href="#" onclick="filterCategory('İkinci El ve Sıfır Alışveriş', this)">İkinci El ve Sıfır</a></li>
-                <li><a href="#" onclick="filterCategory('İş Makineleri', this)">İş Makineleri</a></li>
-                <li><a href="#" onclick="filterCategory('Hizmetler', this)">Hizmetler</a></li>
-                <li><a href="#" onclick="filterCategory('İş İlanları', this)">İş İlanları</a></li>
-            </ul>
-        </nav>
     </header>
 
     <!-- Gizli Yönetim Paneli -->
     <div id="admin-panel">
-        <h2>🛠️ PazarSepeti Yönetim Paneli (Admin Modu Aktif)</h2>
-        <p>Arama çubuğuna 'admin' yazdığınız için yetkili paneline hoş geldiniz. İstenmeyen ilanları sistemden kaldırabilirsiniz.</p>
+        <h2>🛠️ PazarSepeti Yönetim Paneli (Admin Modu)</h2>
+        <p>Sistem yöneticisi olarak kayıtlı tüm ilanları ve kullanıcı IBAN bilgilerini görüntüleyebilir, silebilirsiniz.</p>
         <table class="admin-table">
             <thead>
                 <tr>
                     <th>İlan Başlığı</th>
                     <th>Kategori</th>
                     <th>Fiyat</th>
-                    <th>Konum</th>
+                    <th>Ekleyen / IBAN</th>
+                    <th>Tür</th>
                     <th>İşlem</th>
                 </tr>
             </thead>
-            <tbody id="adminTableBody">
-                <!-- JS ile dolacak -->
-            </tbody>
+            <tbody id="adminTableBody"></tbody>
         </table>
     </div>
 
-    <!-- Ana İçerik Yapısı -->
+    <!-- Ana İçerik -->
     <div class="main-container">
-        <!-- Sol Filtreleme Alanı -->
-        <aside class="filter-sidebar">
-            <h3>Detaylı Filtre</h3>
-            <div class="filter-group">
-                <label>Kategori</label>
-                <select id="categorySelectFilter" onchange="filterByCategoryDropdown(this.value)">
-                    <option value="Tümü">Tüm Kategoriler</option>
-                    <option value="Emlak">Emlak</option>
-                    <option value="Vasıta">Vasıta</option>
-                    <option value="Yedek Parça">Yedek Parça</option>
-                    <option value="İkinci El ve Sıfır Alışveriş">İkinci El ve Sıfır</option>
-                    <option value="İş Makineleri">İş Makineleri</option>
-                    <option value="Hizmetler">Hizmetler</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Şehir</label>
-                <select onchange="alert('Şehir filtresi seçildi.')">
-                    <option value="">Tüm Türkiye</option>
-                    <option value="İstanbul">İstanbul (Asya / Avrupa)</option>
-                    <option value="Ankara">Ankara</option>
-                    <option value="İzmir">İzmir</option>
-                    <option value="Bursa">Bursa</option>
-                    <option value="Antalya">Antalya</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Sıralama</label>
-                <select>
-                    <option>Tarihe Göre (Yeniden Eskiye)</option>
-                    <option>Fiyata Göre (Önce En Düşük)</option>
-                    <option>Fiyata Göre (Önce En Yüksek)</option>
-                </select>
-            </div>
-        </aside>
-
-        <!-- Sağ İlan Akışı -->
-        <main class="content-area">
-            <div class="section-header">
-                <h2 id="currentCategoryTitle">Tüm İlanlar</h2>
-                <span id="resultCount" style="color: var(--text-muted); font-size: 0.9rem;">5 ilan gösteriliyor</span>
-            </div>
-
-            <div class="listings-list" id="listingsContainer">
-                <!-- İlanlar JavaScript ile dinamik basılacak -->
-            </div>
-        </main>
+        <h2 style="margin-bottom: 1.5rem;" id="sectionTitle">Güncel İlanlar</h2>
+        <div class="listings-grid" id="listingsGrid"></div>
     </div>
 
     <script>
-        // Genişletilmiş ve Sahibinden formatına benzer veri tabanı
+        let currentUser = null;
+        let carPartsStatus = {
+            "Ön Kaput": "Orijinal",
+            "Tavan": "Orijinal",
+            "Sağ Ön Çamurluk": "Orijinal",
+            "Sol Ön Çamurluk": "Orijinal",
+            "Bagaj Kapağı": "Orijinal",
+            "Sağ Arka Kapı": "Orijinal"
+        };
+
+        // Örnek Başlangıç İlanları (Admin'in kendi IBAN'ı ile eklenmiş premium ilan örnekleri)
         let listings = [
-            { id: 1, title: "Acil Satılık Sahibinden Temiz Aile Aracı 1.6 Dizel", category: "Vasıta", price: "740.000 TL", location: "Ankara / Çankaya", date: "04 Ağustos 2026", image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400" },
-            { id: 2, title: "Kadıköy Merkezde Metroya Yakın 3+1 Lüks Daire", category: "Emlak", price: "4.250.000 TL", location: "İstanbul / Kadıköy", date: "04 Ağustos 2026", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400" },
-            { id: 3, title: "Kutulu Faturalı RTX Ekran Kartlı Oyuncu Bilgisayarı", category: "İkinci El ve Sıfır Alışveriş", price: "28.900 TL", location: "İzmir / Bornova", date: "03 Ağustos 2026", image: "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400" },
-            { id: 4, title: "BMW F30 Uyumlu M Paket Karbon Spoiler", category: "Yedek Parça", price: "3.500 TL", location: "Bursa / Nilüfer", date: "03 Ağustos 2026", image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400" },
-            { id: 5, title: "Profesyonel Ev Temizlik ve Tadilat Hizmetleri", category: "Hizmetler", price: "1.500 TL", location: "Antalya / Muratpaşa", date: "02 Ağustos 2026", image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400" }
+            { id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, user: "Admin (Sistem)", iban: "TR33 0006 1005 2121 5849 01", parts: carPartsStatus, image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400" },
+            { id: 2, title: "Lüks Köşe Koltuk Takımı (Leke tutmaz)", category: "Ev Eşyası", price: "14.500 TL", location: "İstanbul / Kadıköy", condition: "Sıfır Ayarında", isPremium: false, user: "Ahmet Yılmaz", iban: "TR99 0001 0001 2345 6789 01", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400" }
         ];
 
-        let currentCategory = "Tümü";
         let searchQuery = "";
 
-        // İlanları listeleme fonksiyonu
-        function renderListings() {
-            const container = document.getElementById("listingsContainer");
-            container.innerHTML = "";
+        // 1. Giriş İşlemi
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById("loginName").value;
+            const email = document.getElementById("loginEmail").value;
+            const phone = document.getElementById("loginPhone").value;
+            const iban = document.getElementById("loginIban").value;
 
-            const filtered = listings.filter(item => {
-                const matchesCategory = currentCategory === "Tümü" || item.category === currentCategory;
-                const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                      item.location.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchesCategory && matchesSearch;
+            currentUser = { name, email, phone, iban };
+            document.getElementById("welcomeUserText").innerText = `Hoş geldin, ${name}`;
+            document.getElementById("displayUserIban").innerText = iban;
+            document.getElementById("auth-modal").style.display = "none";
+        }
+
+        // 2. İlan Verme Modalı Kontrolleri
+        function openListingModal() {
+            document.getElementById("listing-modal").style.display = "flex";
+            renderCarParts();
+        }
+
+        function closeListingModal() {
+            document.getElementById("listing-modal").style.display = "none";
+        }
+
+        function toggleCategoryFields(category) {
+            const vasitaDiv = document.getElementById("vasitaFields");
+            if (category === "Vasıta") {
+                vasitaDiv.style.display = "block";
+            } else {
+                vasitaDiv.style.display = "none";
+            }
+        }
+
+        function toggleIbanPayment(checked) {
+            const ibanArea = document.getElementById("ibanPaymentArea");
+            ibanArea.style.display = checked ? "block" : "none";
+        }
+
+        // Vasıta Ekspertiz Parça Döngüsü
+        function renderCarParts() {
+            const grid = document.getElementById("carPartsGrid");
+            grid.innerHTML = "";
+            const statuses = ["Orijinal", "Boyalı", "Değişen"];
+
+            for (let part in carPartsStatus) {
+                const currentStatus = carPartsStatus[part];
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = `car-part-btn ${currentStatus === 'Orijinal' ? 'selected-orijinal' : currentStatus === 'Boyalı' ? 'selected-boyali' : 'selected-degisen'}`;
+                btn.innerHTML = `${part}<br><span style="font-size:0.7rem;">(${currentStatus})</span>`;
+                
+                btn.onclick = () => {
+                    let nextIdx = (statuses.indexOf(carPartsStatus[part]) + 1) % statuses.length;
+                    carPartsStatus[part] = statuses[nextIdx];
+                    renderCarParts();
+                };
+                grid.appendChild(btn);
+            }
+        }
+
+        // İlan Kaydetme
+        function saveListing(event) {
+            event.preventDefault();
+            const category = document.getElementById("newCategory").value;
+            const title = document.getElementById("newTitle").value;
+            const price = document.getElementById("newPrice").value;
+            const location = document.getElementById("newLocation").value;
+            const condition = document.getElementById("newCondition").value;
+            const isPremium = document.getElementById("isPremium").checked;
+
+            let defaultImg = "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400";
+            if (category === "Vasıta") defaultImg = "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400";
+            if (category === "Ev Eşyası") defaultImg = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400";
+            if (category === "Elektronik") defaultImg = "https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400";
+
+            const newListing = {
+                id: Date.now(),
+                title,
+                category,
+                price,
+                location,
+                condition,
+                isPremium,
+                user: currentUser.name,
+                iban: currentUser.iban,
+                parts: category === "Vasıta" ? {...carPartsStatus} : null,
+                image: defaultImg
+            };
+
+            listings.unshift(newListing); // Premium veya normal ilan eklendi
+            closeListingModal();
+            renderListings();
+            renderAdminTable();
+            alert(isPremium ? "Premium ilanınız başarıyla oluşturuldu! IBAN üzerinden ödeme tahsil edildi ve ilanınız süresiz olarak en üstte öne çıkarıldı." : "İlanınız başarıyla yayınlandı.");
+        }
+
+        // İlanları Listeleme (Premiumlar En Üstte Öne Çıkar)
+        function renderListings() {
+            const grid = document.getElementById("listingsGrid");
+            grid.innerHTML = "";
+
+            // Önce premium olanlar sıralanır
+            let sortedListings = [...listings].sort((a, b) => (b.isPremium === true) - (a.isPremium === true));
+
+            const filtered = sortedListings.filter(item => {
+                return item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                       item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                       item.category.toLowerCase().includes(searchQuery.toLowerCase());
             });
 
-            document.getElementById("resultCount").innerText = `${filtered.length} ilan gösteriliyor`;
-
             if (filtered.length === 0) {
-                container.innerHTML = "<div style='background:white; padding:2rem; text-align:center; border-radius:8px; color:var(--text-muted);'>Aradığınız kriterlere uygun ilan bulunamadı.</div>";
+                grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color: var(--text-muted);'>Aradığınız kriterlere uygun ilan bulunamadı.</p>";
                 return;
             }
 
             filtered.forEach(item => {
-                const row = document.createElement("div");
-                row.className = "listing-row-card";
-                row.innerHTML = `
-                    <div class="listing-img-box">
-                        <img src="${item.image}" alt="${item.title}">
-                    </div>
-                    <div class="listing-details">
-                        <div class="listing-info">
-                            <h4>${item.title}</h4>
-                            <div class="listing-location-date">${item.location} &bull; ${item.date}</div>
-                        </div>
-                        <div class="listing-price-box">
-                            <div class="listing-price">${item.price}</div>
-                            <span style="font-size:0.8rem; color:var(--text-muted);">${item.category}</span>
+                const card = document.createElement("div");
+                card.className = `listing-card ${item.isPremium ? 'premium' : ''}`;
+                
+                let partsHtml = "";
+                if (item.parts) {
+                    partsHtml = `<div style="font-size:0.75rem; background:#f1f5f9; padding:0.4rem; border-radius:4px; margin-top:0.4rem;">
+                        <strong>Ekspertiz:</strong> Kaput: ${item.parts["Ön Kaput"]} | Tavan: ${item.parts["Tavan"]}
+                    </div>`;
+                }
+
+                card.innerHTML = `
+                    ${item.isPremium ? '<div class="premium-badge">👑 PREMİUM</div>' : ''}
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="listing-body">
+                        <div class="listing-title">${item.title}</div>
+                        <div class="listing-price">${item.price}</div>
+                        <div style="font-size:0.85rem; color:var(--text-muted);">${item.condition}</div>
+                        ${partsHtml}
+                        <div class="listing-footer">
+                            <span>${item.location}</span>
+                            <span>İsteyen: ${item.user}</span>
                         </div>
                     </div>
                 `;
-                container.appendChild(row);
+                grid.appendChild(card);
             });
         }
 
-        // Yönetim Paneli Tablosunu Güncelle
+        // Yönetim Paneli Tablosu
         function renderAdminTable() {
             const tbody = document.getElementById("adminTableBody");
             tbody.innerHTML = "";
@@ -507,59 +557,32 @@
                     <td>${item.title}</td>
                     <td>${item.category}</td>
                     <td>${item.price}</td>
-                    <td>${item.location}</td>
+                    <td>${item.user}<br><span style="font-size:0.75rem; color:#9ca3af;">IBAN: ${item.iban}</span></td>
+                    <td>${item.isPremium ? '👑 Premium (Süresiz)' : 'Standart'}</td>
                     <td><button class="btn-danger" onclick="deleteListing(${item.id})">Kaldır</button></td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // İlan Silme
         function deleteListing(id) {
             listings = listings.filter(item => item.id !== id);
             renderListings();
             renderAdminTable();
         }
 
-        // Arama Çubuğu Dinleyicisi (Admin Kontrolü Dahil)
+        // Arama Çubuğu (Admin paneli arka planda kelime yazılınca açılır, arama çubuğunda "admin" yazısı gözükmez)
         function handleSearch(value) {
-            searchQuery = value;
             const adminPanel = document.getElementById("admin-panel");
-
+            
             if (value.toLowerCase().trim() === "admin") {
                 adminPanel.style.display = "block";
                 renderAdminTable();
+                searchQuery = ""; // Arama çubuğunda 'admin' yazısının kalmasını engeller
             } else {
                 adminPanel.style.display = "none";
+                searchQuery = value;
             }
-
-            renderListings();
-        }
-
-        // Kategori Filtreleme (Üst Menü)
-        function filterCategory(category, element) {
-            currentCategory = category;
-            document.getElementById("currentCategoryTitle").innerText = category === "Tümü" ? "Tüm İlanlar" : category + " İlanları";
-            document.getElementById("categorySelectFilter").value = category;
-
-            document.querySelectorAll(".categories-bar a").forEach(el => el.classList.remove("active"));
-            if (element) element.classList.add("active");
-
-            renderListings();
-        }
-
-        // Sol Seçim Kutusu ile Filtreleme
-        function filterByCategoryDropdown(category) {
-            currentCategory = category;
-            document.getElementById("currentCategoryTitle").innerText = category === "Tümü" ? "Tüm İlanlar" : category + " İlanları";
-            
-            document.querySelectorAll(".categories-bar a").forEach(el => {
-                if (el.innerText.includes(category) || (category === "Tümü" && el.innerText.includes("Tüm"))) {
-                    el.classList.add("active");
-                } else {
-                    el.classList.remove("active");
-                }
-            });
 
             renderListings();
         }
