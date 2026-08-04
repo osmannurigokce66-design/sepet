@@ -120,7 +120,7 @@
             padding: 2.5rem;
             border-radius: 12px;
             width: 100%;
-            max-width: 450px;
+            max-width: 480px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative;
             max-height: 90vh;
@@ -134,36 +134,46 @@
             width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none;
         }
 
-        /* Vasıta Ekspertiz Şeması */
+        /* --- GERÇEKÇİ ARAÇ ŞEMASI (GÖVDE DÜZENİ) --- */
         .car-expert-container {
-            background: #f8fafc;
-            border: 2px dashed var(--border);
+            background: #1e293b;
+            border: 2px solid var(--border);
             padding: 1.5rem;
-            border-radius: 8px;
+            border-radius: 10px;
             margin: 1rem 0;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
 
-        .car-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            margin-top: 1rem;
+        .car-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            justify-content: center;
         }
 
         .car-part-btn {
-            background: white;
-            border: 1px solid var(--border);
-            padding: 0.6rem;
+            background: #ffffff;
+            border: 2px solid var(--border);
+            padding: 0.6rem 0.4rem;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            flex: 1;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .car-part-btn.selected-orijinal { background-color: #d1fae5; border-color: #10b981; color: #065f46; }
-        .car-part-btn.selected-boyali { background-color: #fef3c7; border-color: #f59e0b; color: #92400e; }
-        .car-part-btn.selected-degisen { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .car-part-btn:hover { transform: scale(1.02); }
+
+        /* Ekspertiz Renk Kodları */
+        .selected-orijinal { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .selected-boyali { background-color: #fef3c7 !important; border-color: #f59e0b !important; color: #92400e !important; }
+        .selected-degisen { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
 
         /* --- ANA İÇERİK --- */
         .main-container {
@@ -256,7 +266,7 @@
 
     <!-- 2. İLAN VERME MODALI -->
     <div id="listing-modal" class="modal">
-        <div class="modal-box" style="max-width: 650px;">
+        <div class="modal-box" style="max-width: 680px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                 <h2>Yeni İlan Oluştur</h2>
                 <button onclick="closeModal('listing-modal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
@@ -289,10 +299,13 @@
                     <input type="text" id="newLocation" required placeholder="Örn: İstanbul / Kadıköy">
                 </div>
 
+                <!-- GERÇEKÇİ ARABA GÖVDE HATTI EKSPERTİZİ -->
                 <div id="vasitaFields" style="display: none;">
-                    <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">🚗 Araç Parça Ekspertiz Şeması</label>
-                    <div class="car-expert-container">
-                        <div class="car-grid" id="carPartsGrid"></div>
+                    <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">🚗 Araç Gövde Hatları Ekspertiz Şeması</label>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">Parçalara tıklayarak durumu değiştirebilirsiniz (Orijinal / Boyalı / Değişen):</p>
+                    
+                    <div class="car-expert-container" id="carPartsGrid">
+                        <!-- Otomobil şeması dinamik olarak JS ile buraya çizilir -->
                     </div>
                 </div>
 
@@ -320,7 +333,7 @@
         <div class="modal-box text-center">
             <h2>👑 Premium Üyelik Talebi</h2>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
-                Yıllık Premium üyelik ücreti <strong>50 TL</strong>'dir. Premium özelliklerden (süresiz kalma ve en üstte öne çıkma) yararlanabilmek için aşağıdaki Admin IBAN adresine havale/EFT yapmalısınız.
+                Yıllık Premium üyelik ücreti <strong>50 TL</strong>'dir. Premium özelliklerden yararlanabilmek için aşağıdaki Admin IBAN adresine havale/EFT yapmalısınız.
             </p>
             <div style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 1rem; font-weight: bold; margin-bottom: 1rem; color: var(--primary);">
                 TR12 0001 0005 5555 4444 3333 01<br>
@@ -353,7 +366,7 @@
     <!-- GİZLİ YÖNETİM PANELİ -->
     <div id="admin-panel">
         <h2>🛠️ PazarSepeti Yönetim Paneli (Admin Modu)</h2>
-        <p style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1rem;">Kullanıcıların Premium ödeme taleplerini buradan inceleyip onaylayabilirsiniz.</p>
+        <p style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1rem;">Kullanıcıların 50 TL yıllık Premium ödeme taleplerini buradan onaylayabilirsiniz.</p>
         
         <h3 style="margin-top: 1rem; font-size: 1rem; color: #f8fafc;">Kayıtlı Kullanıcılar ve Premium Onayları</h3>
         <table class="admin-table">
@@ -395,18 +408,23 @@
     <script>
         let currentUser = null;
         
-        // Örnek Kullanıcı Veritabanı
         let users = [
             { name: "Admin (Sistem)", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", isPremium: true, premiumStatus: "Onaylı" }
         ];
 
+        // Gerçek araba hatlarına benzetilmiş parça dizilimi
         let carPartsStatus = {
-            "Ön Kaput": "Orijinal",
-            "Tavan": "Orijinal",
-            "Sağ Ön Çamurluk": "Orijinal",
             "Sol Ön Çamurluk": "Orijinal",
+            "Ön Kaput": "Orijinal",
+            "Sağ Ön Çamurluk": "Orijinal",
+            "Sol Ön Kapı": "Orijinal",
+            "Tavan": "Orijinal",
+            "Sağ Ön Kapı": "Orijinal",
+            "Sol Arka Kapı": "Orijinal",
             "Bagaj Kapağı": "Orijinal",
-            "Sağ Arka Kapı": "Orijinal"
+            "Sağ Arka Kapı": "Orijinal",
+            "Sol Arka Çamurluk": "Orijinal",
+            "Sağ Arka Çamurluk": "Orijinal"
         };
 
         let listings = [
@@ -418,7 +436,6 @@
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-        // Giriş Yapma İşlemi
         function handleLogin(event) {
             event.preventDefault();
             const name = document.getElementById("loginName").value;
@@ -426,7 +443,6 @@
             const phone = document.getElementById("loginPhone").value;
             const iban = document.getElementById("loginIban").value;
 
-            // Kullanıcı daha önce kayıtlı mı kontrol et, yoksa ekle
             let existingUser = users.find(u => u.email === email);
             if (!existingUser) {
                 existingUser = { name, email, phone, iban, isPremium: false, premiumStatus: "Normal" };
@@ -460,7 +476,6 @@
                 return;
             }
             
-            // Premium durumunu form açıldığında güncelle
             const checkbox = document.getElementById("isPremium");
             const statusText = document.getElementById("premiumStatusText");
             
@@ -485,7 +500,7 @@
         function checkPremiumStatus(checkbox) {
             if (!currentUser.isPremium && currentUser.premiumStatus !== "Beklemede" && checkbox.checked) {
                 checkbox.checked = false;
-                openModal('payment-modal'); // Para gönderme ekranını aç
+                openModal('payment-modal');
             } else if (currentUser.premiumStatus === "Beklemede") {
                 checkbox.checked = false;
                 alert("Ödeme onayınız beklenmektedir!");
@@ -502,25 +517,53 @@
             document.getElementById("vasitaFields").style.display = category === "Vasıta" ? "block" : "none";
         }
 
+        // Otomobil hatlarına uygun satır bazlı şema yerleşimi
         function renderCarParts() {
-            const grid = document.getElementById("carPartsGrid");
-            grid.innerHTML = "";
+            const container = document.getElementById("carPartsGrid");
+            container.innerHTML = "";
             const statuses = ["Orijinal", "Boyalı", "Değişen"];
 
-            for (let part in carPartsStatus) {
-                let currentStatus = carPartsStatus[part];
-                let btn = document.createElement("button");
-                btn.type = "button";
-                btn.className = `car-part-btn ${currentStatus === 'Orijinal' ? 'selected-orijinal' : currentStatus === 'Boyalı' ? 'selected-boyali' : 'selected-degisen'}`;
-                btn.innerHTML = `${part}<br><span style="font-size:0.7rem;">(${currentStatus})</span>`;
+            // Şema Satırları (Arabanın Önünden Arkasına Doğru)
+            const rows = [
+                ["Sol Ön Çamurluk", "Ön Kaput", "Sağ Ön Çamurluk"],
+                ["Sol Ön Kapı", "Tavan", "Sağ Ön Kapı"],
+                ["Sol Arka Kapı", "Bagaj Kapağı", "Sağ Arka Kapı"],
+                ["Sol Arka Çamurluk", "", "Sağ Arka Çamurluk"]
+            ];
+
+            rows.forEach(rowParts => {
+                const rowDiv = document.createElement("div");
+                rowDiv.className = "car-row";
                 
-                btn.onclick = () => {
-                    let nextIdx = (statuses.indexOf(carPartsStatus[part]) + 1) % statuses.length;
-                    carPartsStatus[part] = statuses[nextIdx];
-                    renderCarParts();
-                };
-                grid.appendChild(btn);
-            }
+                rowParts.forEach(partName => {
+                    if (partName === "") {
+                        // Boşluk doldurucu
+                        const emptySpace = document.createElement("div");
+                        emptySpace.style.flex = "1";
+                        rowDiv.appendChild(emptySpace);
+                        return;
+                    }
+
+                    const currentStatus = carPartsStatus[partName];
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    
+                    let statusClass = "selected-orijinal";
+                    if (currentStatus === "Boyalı") statusClass = "selected-boyali";
+                    if (currentStatus === "Değişen") statusClass = "selected-degisen";
+
+                    btn.className = `car-part-btn ${statusClass}`;
+                    btn.innerHTML = `${partName}<br><span style="font-size:0.65rem; opacity:0.8;">(${currentStatus})</span>`;
+                    
+                    btn.onclick = () => {
+                        let nextIdx = (statuses.indexOf(carPartsStatus[partName]) + 1) % statuses.length;
+                        carPartsStatus[partName] = statuses[nextIdx];
+                        renderCarParts();
+                    };
+                    rowDiv.appendChild(btn);
+                });
+                container.appendChild(rowDiv);
+            });
         }
 
         function saveListing(event) {
@@ -559,9 +602,7 @@
             alert(isPremium ? "Premium ilanınız süresiz ve en üstte yayınlandı!" : "İlanınız başarıyla yayınlandı.");
         }
 
-        // Admin Paneli Verilerini Güncelle
         function renderAdminTables() {
-            // Kullanıcılar Tablosu
             const userTbody = document.getElementById("adminUsersTableBody");
             userTbody.innerHTML = "";
             users.forEach(u => {
@@ -577,7 +618,6 @@
                 userTbody.appendChild(tr);
             });
 
-            // İlanlar Tablosu
             const listingTbody = document.getElementById("adminListingsTableBody");
             listingTbody.innerHTML = "";
             listings.forEach(item => {
@@ -594,7 +634,6 @@
             });
         }
 
-        // Admin Tarafından 50 TL Ödemeyi Onaylama ve Premium Yapma
         function approveUser(email) {
             let targetUser = users.find(u => u.email === email);
             if (targetUser) {
@@ -628,7 +667,10 @@
                 const card = document.createElement("div");
                 card.className = `listing-card ${item.isPremium ? 'premium' : ''}`;
                 
-                let partsHtml = item.parts ? `<div style="font-size:0.75rem; background:#f1f5f9; padding:0.4rem; border-radius:4px; margin-top:0.4rem;"><strong>Ekspertiz:</strong> Kaput: ${item.parts["Ön Kaput"]} | Tavan: ${item.parts["Tavan"]}</div>` : "";
+                let partsHtml = "";
+                if (item.parts) {
+                    partsHtml = `<div style="font-size:0.75rem; background:#f1f5f9; padding:0.4rem; border-radius:4px; margin-top:0.4rem;"><strong>Ekspertiz:</strong> Kaput: ${item.parts["Ön Kaput"]} | Tavan: ${item.parts["Tavan"]} | Sol Yan: ${item.parts["Sol Ön Kapı"]}</div>`;
+                }
 
                 card.innerHTML = `
                     ${item.isPremium ? '<div class="premium-badge">👑 PREMİUM</div>' : ''}
