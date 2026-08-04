@@ -3,78 +3,1410 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oturum Sürekliliği Örneği</title>
+    <title>PazarSepeti - Gelişmiş İlan Platformu</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-        .gizli { display: none; }
-        .aktif { display: block; }
-        button { padding: 10px 20px; font-size: 16px; cursor: pointer; margin: 10px; }
+        :root {
+            --primary: #0055ff;
+            --primary-hover: #0040cc;
+            --accent: #ff6600;
+            --premium-gold: #f59e0b;
+            --bg-main: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #777777;
+            --border: #e0e0e0;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); }
+
+        /* --- ÜST HEADER & ÖZEL LOGO --- */
+        header { background-color: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+        .header-top { max-width: 1200px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
+        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
+        .logo-text span { color: var(--accent); }
+
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+        
+        .badge-counter { background: var(--accent); color: white; border-radius: 10px; padding: 1px 6px; font-size: 0.7rem; font-weight: bold; vertical-align: top; margin-left: 3px; }
+
+        .header-search { flex: 1; max-width: 300px; margin: 0 1rem; display: flex; background: #f0f2f5; border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+        .header-search input { flex: 1; border: none; padding: 0.6rem 1rem; background: transparent; font-size: 0.9rem; outline: none; }
+
+        .header-actions { display: flex; gap: 0.8rem; align-items: center; position: relative; }
+
+        .btn { background-color: var(--primary); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; font-size: 0.9rem; transition: background 0.2s; }
+        .btn:hover { background-color: var(--primary-hover); }
+        .btn-accent { background-color: var(--accent); }
+        .btn-accent:hover { background-color: #e05b00; }
+        .btn-outline { background-color: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background-color: #eff6ff; }
+        .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .btn-warning { background-color: #f59e0b; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+
+        /* --- PROFİL MİNİ MENÜ --- */
+        .profile-menu-container { position: relative; display: inline-block; }
+        .profile-trigger { background: #f0f4ff; border: 1px solid var(--primary); color: var(--primary); padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+        
+        .dropdown-menu {
+            display: none; position: absolute; right: 0; top: 110%; background: white; border: 1px solid var(--border);
+            border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.12); width: 220px; z-index: 2000; overflow: hidden;
+        }
+        .dropdown-menu.show { display: block; }
+        .dropdown-item { padding: 0.75rem 1rem; font-size: 0.85rem; color: var(--text-main); text-decoration: none; display: block; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+        .dropdown-item:hover { background: #f8fafc; color: var(--primary); }
+        .dropdown-item.danger { color: #ef4444; }
+        .dropdown-item.danger:hover { background: #fee2e2; }
+
+        /* --- MODALLER --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 3000; }
+        .modal-box { background: white; padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 520px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-box h2 { margin-bottom: 1.5rem; color: var(--primary); text-align: center; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none; }
+
+        /* --- TABLAR --- */
+        .auth-tabs { display: flex; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border); }
+        .auth-tab { flex: 1; text-align: center; padding: 0.75rem; font-weight: bold; cursor: pointer; color: var(--text-muted); }
+        .auth-tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); margin-bottom: -2px; }
+
+        /* --- GALERİ --- */
+        .gallery-upload-box { border: 2px dashed var(--primary); background: #f0f4ff; padding: 1rem; border-radius: 8px; text-align: center; cursor: pointer; margin-bottom: 1rem; }
+        .gallery-preview-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem; }
+        .gallery-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+
+        /* --- 3D ARABA ŞEMASI --- */
+        .car-expert-wrapper { background: #0f172a; border: 2px solid #334155; padding: 1.2rem; border-radius: 12px; margin: 1rem 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .car-section-title { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: bold; }
+        .car-row { display: flex; gap: 8px; width: 100%; justify-content: center; }
+        .car-part-btn { background: #ffffff; border: 2px solid var(--border); padding: 0.6rem 0.3rem; border-radius: 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; text-align: center; flex: 1; }
+
+        .selected-orijinal { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; }
+        .selected-boyali { background-color: #fef3c7 !important; border-color: #f59e0b !important; color: #92400e !important; }
+        .selected-degisen { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
+
+        /* --- KARTLAR --- */
+        .main-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        
+        .listing-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+        .listing-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .listing-card.premium { border: 2px solid var(--premium-gold); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
+        
+        .premium-badge { position: absolute; top: 10px; right: 10px; background: var(--premium-gold); color: white; padding: 0.2rem 0.6rem; font-size: 0.75rem; font-weight: bold; border-radius: 4px; z-index: 10; }
+        .fav-btn { position: absolute; top: 10px; left: 10px; background: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+        .listing-card img { width: 100%; height: 160px; object-fit: cover; }
+        .listing-body { padding: 1rem; }
+        .listing-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .listing-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.4rem; }
+        .listing-footer { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 0.8rem; }
+
+        /* --- DETAY & CHAT --- */
+        .detail-modal-box { max-width: 750px; background: white; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
+        .detail-gallery { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 5px; }
+        .detail-gallery img { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+        .seller-card { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+
+        .chat-list-item { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 0.8rem; cursor: pointer; transition: background 0.2s; }
+        .chat-list-item:hover { background: #edf2f7; }
+        .chat-list-item.unread { border-left: 4px solid var(--accent); background: #fffdf9; }
+
+        .chat-window-box { background: white; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; height: 500px; overflow: hidden; }
+        .chat-header { background: #f1f5f9; padding: 1rem; border-bottom: 1px solid var(--border); font-weight: bold; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fafafa; }
+        
+        .chat-bubble { max-width: 75%; padding: 0.75rem 1rem; border-radius: 10px; font-size: 0.9rem; line-height: 1.4; }
+        .chat-bubble.incoming { background: #ffffff; border: 1px solid var(--border); align-self: flex-start; color: var(--text-main); }
+        .chat-bubble.outgoing { background: var(--primary); color: white; align-self: flex-end; }
+        
+        .chat-input-area { padding: 1rem; background: white; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; }
+        .chat-input-area input { flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; outline: none; }
+
+        /* --- YARDIM BOTU (WIDGET) --- */
+        .bot-widget-btn { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 15px rgba(0,85,255,0.4); z-index: 4000; transition: transform 0.2s; }
+        .bot-widget-btn:hover { transform: scale(1.08); }
+        
+        .bot-window { position: fixed; bottom: 90px; right: 20px; width: 340px; height: 450px; background: white; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: none; flex-direction: column; z-index: 4000; overflow: hidden; }
+        .bot-window.show { display: flex; }
+        .bot-header { background: var(--primary); color: white; padding: 1rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem; }
+        .bot-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #f8fafc; font-size: 0.85rem; }
+        .bot-bubble { max-width: 80%; padding: 0.6rem 0.9rem; border-radius: 8px; line-height: 1.3; }
+        .bot-bubble.incoming { background: white; border: 1px solid var(--border); align-self: flex-start; color: var(--text-main); }
+        .bot-bubble.outgoing { background: var(--primary); color: white; align-self: flex-end; }
+        .bot-input-area { padding: 0.8rem; background: white; border-top: 1px solid var(--border); display: flex; gap: 5px; }
+        .bot-input-area input { flex: 1; padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; outline: none; }
+
+        .section-view { display: none; }
+        .section-view.active { display: block; }
+
+        /* ADMIN TABLO STİLLERİ */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: white; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        .admin-table th, .admin-table td { padding: 0.75rem 1rem; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        .admin-table th { background: #1e293b; color: white; }
     </style>
 </head>
 <body>
 
-    <!-- Giriş Yapılmamış Durum (Giriş Ekranı) -->
-    <div id="girisEkrani" class="aktif">
-        <h2>Lütfen Giriş Yapın</h2>
-        <input type="text" id="kullaniciAdi" placeholder="Kullanıcı Adı"><br><br>
-        <button onclick="girisYap()">Giriş Yap</button>
+    <!-- 1. GİRİŞ / KAYIT MODALI -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('auth-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="tabLoginBtn" onclick="switchAuthTab('login')">Giriş Yap</div>
+                <div class="auth-tab" id="tabRegisterBtn" onclick="switchAuthTab('register')">Kayıt Ol</div>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group"><label>E-posta Adresi</label><input type="email" id="loginEmail" required placeholder="ornek@mail.com"></div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Giriş Yap</button>
+            </form>
+
+            <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+                <div class="form-group"><label>Ad Soyad</label><input type="text" id="regName" required placeholder="Adınız Soyadınız"></div>
+                <div class="form-group"><label>E-posta Adresi</label><input type="email" id="regEmail" required placeholder="ornek@mail.com"></div>
+                <div class="form-group"><label>Telefon Numarası</label><input type="tel" id="regPhone" required placeholder="05XX XXX XX XX"></div>
+                <div class="form-group"><label>Kişisel IBAN Numaranız (Satış için)</label><input type="text" id="regIban" required placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
+                <button type="submit" class="btn btn-accent" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Kayıt Ol ve Otomatik Giriş Yap</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Giriş Yapılmış Durum (Panel / Ana Ekran) -->
-    <div id="panelEkrani" class="gizli">
-        <h2 id="karsilamaMesaji">Hoş Geldiniz!</h2>
-        <button onclick="cikisYap()">Çıkış Yap</button>
+    <!-- 2. İLAN VERME MODALI -->
+    <div id="listing-modal" class="modal">
+        <div class="modal-box" style="max-width: 680px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Yeni İlan Oluştur</h2>
+                <button onclick="closeModal('listing-modal')" style="background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            </div>
+            
+            <form onsubmit="saveListing(event)">
+                <div class="form-group">
+                    <label>Kategori Seçin</label>
+                    <select id="newCategory" onchange="toggleCategoryFields(this.value)" required>
+                        <option value="">-- Kategori Seçiniz --</option>
+                        <option value="Vasıta">Vasıta</option>
+                        <option value="Ev Eşyası">Ev Eşyası</option>
+                        <option value="Elektronik">Elektronik</option>
+                        <option value="Emlak">Emlak</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>İlan Fotoğrafları</label>
+                    <div class="gallery-upload-box" onclick="document.getElementById('hiddenFileinput').click()">
+                        <span style="font-size: 1.5rem;">📁</span>
+                        <div style="font-weight: 600; color: var(--primary); margin-top: 0.3rem;">Galeriden Fotoğraf Seç</div>
+                    </div>
+                    <input type="file" id="hiddenFileinput" accept="image/*" multiple style="display: none;" onchange="handleGallerySelection(event)">
+                    <div class="gallery-preview-grid" id="galleryPreviewContainer"></div>
+                </div>
+
+                <div class="form-group"><label>İlan Başlığı</label><input type="text" id="newTitle" required placeholder="Örn: Hatasız Temiz Aile Aracı"></div>
+                <div class="form-group"><label>Fiyat (TL)</label><input type="text" id="newPrice" required placeholder="Örn: 780.000 TL"></div>
+                <div class="form-group"><label>Ödeme Alınacak IBAN (Satış için)</label><input type="text" id="newIban" required placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
+                <div class="form-group"><label>Konum (Şehir / İlçe)</label><input type="text" id="newLocation" required placeholder="Örn: Ankara / Çankaya"></div>
+
+                <!-- VASITA DETAY ALANLARI -->
+                <div id="vasitaFields" style="display: none; background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <label style="font-weight: bold; font-size: 0.95rem; color: var(--primary); margin-bottom: 0.8rem; display: block;">🚗 Detaylı Vasıta Bilgileri</label>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group"><label>Model Yılı</label><input type="number" id="vYear" placeholder="Örn: 2020"></div>
+                        <div class="form-group"><label>Kilometre (KM)</label><input type="text" id="vKm" placeholder="Örn: 85.000"></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group">
+                            <label>Vites Tipi</label>
+                            <select id="vGear">
+                                <option value="Düz (Manuel)">Düz (Manuel)</option>
+                                <option value="Otomatik">Otomatik</option>
+                                <option value="Yarı Otomatik">Yarı Otomatik</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Yakıt Türü</label>
+                            <select id="vFuel">
+                                <option value="Benzin">Benzin</option>
+                                <option value="Dizel">Dizel</option>
+                                <option value="LPG & Benzin">LPG & Benzin</option>
+                                <option value="Hibrit">Hibrit</option>
+                                <option value="Elektrik">Elektrik</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group"><label>Motor Gücü (HP)</label><input type="number" id="vHp" placeholder="Örn: 136"></div>
+                        <div class="form-group"><label>Motor Hacmi (cc)</label><input type="text" id="vEngine" placeholder="Örn: 1598 cc"></div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div class="form-group"><label>Kasa Tipi</label><input type="text" id="vBody" placeholder="Örn: Sedan / Hatchback"></div>
+                        <div class="form-group"><label>Renk</label><input type="text" id="vColor" placeholder="Örn: Beyaz / Gri"></div>
+                    </div>
+
+                    <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary); margin-top: 1rem; display: block;">🛠️ 3D Araç Parça Durumları</label>
+                    <div class="car-expert-wrapper" id="carPartsContainer"></div>
+                </div>
+
+                <div class="form-group"><label>Açıklama</label><input type="text" id="newCondition" placeholder="İlan açıklaması..."></div>
+
+                <div style="background: #fffbeb; border: 1px solid #fef3c7; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: bold; color: #b45309;">
+                        <input type="checkbox" id="isPremium" onchange="checkPremiumStatus(this)" style="width: 18px; height: 18px;">
+                        👑 Premium İlan Yap (Yıllık Ücret: 50 TL)
+                    </label>
+                    <div id="premiumStatusText" style="font-size: 0.8rem; margin-top: 0.4rem; color: #78350f;"></div>
+                </div>
+
+                <button type="submit" class="btn btn-accent" style="width: 100%; padding: 0.8rem;">İlanı Yayınla</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. ÖDEME MODALI -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-box" style="text-align: center;">
+            <h2>👑 Premium Üyelik Talebi</h2>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Yıllık <strong>50 TL</strong> havale yaptıktan sonra dekontu yükleyiniz.</p>
+            <div id="adminIbanDisplayBox" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 6px; font-family: monospace; font-weight: bold; margin-bottom: 1rem; color: var(--primary);">
+                TR12 0001 0005 5555 4444 3333 01
+            </div>
+            <div class="form-group" style="text-align: left;">
+                <label>Ödeme Dekontu</label>
+                <input type="file" id="receiptFileInput" accept="image/*" style="padding: 0.4rem;">
+            </div>
+            <button class="btn" onclick="submitPremiumRequest()" style="width: 100%; margin-top: 0.5rem;">Dekontu Gönder</button>
+            <button onclick="closeModal('payment-modal')" style="background:none; border:none; margin-top:1rem; color:var(--text-muted); cursor:pointer;">Vazgeç</button>
+        </div>
+    </div>
+
+    <!-- 3.B İLAN KALDIRMA MODALI -->
+    <div id="remove-choice-modal" class="modal">
+        <div class="modal-box" style="max-width: 450px; text-align: center;">
+            <button onclick="closeModal('remove-choice-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            <h2>İlanı Kaldır</h2>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">Lütfen ilanı neden kaldırmak istediğinizi seçin:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn btn-outline" style="padding: 0.8rem;" onclick="executeNormalRemove()">Normal İptal / Süresi Doldu</button>
+                <button class="btn btn-accent" style="padding: 0.8rem;" onclick="openSoldReceiptModal()">Satıldığı İçin İlandan Kaldırıyorum</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3.C SATIŞ DEKONT YÜKLEME MODALI -->
+    <div id="sold-receipt-modal" class="modal">
+        <div class="modal-box" style="max-width: 480px; text-align: center;">
+            <button onclick="closeModal('sold-receipt-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            <h2>🤝 Satış Teyidi ve Dekont</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Satış işleminin gerçekleştiğini doğrulamak için lütfen ödeme dekontunu yükleyin.</p>
+            
+            <div class="form-group" style="text-align: left;">
+                <label>Satış Dekontu / Transfer Kanıtı Görseli</label>
+                <input type="file" id="soldReceiptInput" accept="image/*" style="padding: 0.4rem;">
+            </div>
+            <button class="btn btn-accent" style="width: 100%; margin-top: 0.5rem;" onclick="executeSoldRemove()">Dekontu Onayla ve İlanı Kaldır</button>
+        </div>
+    </div>
+
+    <!-- 4. İLAN DETAY MODALI -->
+    <div id="detail-modal" class="modal">
+        <div class="detail-modal-box">
+            <button onclick="closeModal('detail-modal')" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:1.3rem; cursor:pointer;">✕</button>
+            <div id="detailContent"></div>
+        </div>
+    </div>
+
+    <!-- 5. HESAP BİLGİLERİM MODALI -->
+    <div id="account-info-modal" class="modal">
+        <div class="modal-box">
+            <button onclick="closeModal('account-info-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
+            <h2>👤 Hesap Bilgilerim</h2>
+            <div id="accountInfoContent" style="display:flex; flex-direction:column; gap:0.8rem; font-size:0.95rem; margin-top:1rem;"></div>
+        </div>
+    </div>
+
+    <!-- ÜST HEADER -->
+    <header>
+        <div class="header-top">
+            <a class="logo-container" onclick="switchView('home')">
+                <div class="logo-text">Pazar<span>Sepeti</span></div>
+            </a>
+            
+            <nav class="nav-links">
+                <a class="nav-link active" onclick="switchView('home')" id="navHome">Ana Sayfa</a>
+                <a class="nav-link" onclick="switchView('myListings')" id="navMyListings">İlanlarım</a>
+                <a class="nav-link" onclick="switchView('favorites')" id="navFavorites">Favorilerim</a>
+                <a class="nav-link" onclick="switchView('contact')" id="navContact">İletişim & Sohbetler <span class="badge-counter" id="messageBadge" style="display:none;">0</span></a>
+                <a class="nav-link" onclick="switchView('admin')" id="navAdmin" style="display:none; color:#ef4444;">ADMIN</a>
+            </nav>
+
+            <div class="header-search">
+                <input type="text" id="searchInput" placeholder="İlan ara..." oninput="handleSearch(this.value)">
+            </div>
+
+            <div class="header-actions" id="headerActions">
+                <button class="btn btn-outline" onclick="openModal('auth-modal')">Giriş / Kayıt Ol</button>
+                <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- İÇERİK GÖRÜNÜMLERİ -->
+    <div class="main-container">
+        <div id="viewHome" class="section-view active">
+            <h2 style="margin-bottom: 1.5rem;">Güncel İlanlar</h2>
+            <div class="listings-grid" id="listingsGrid"></div>
+        </div>
+
+        <div id="viewMyListings" class="section-view">
+            <h2 style="margin-bottom: 1.5rem;">Benim Eklediğim İlanlar</h2>
+            <div class="listings-grid" id="myListingsGrid"></div>
+        </div>
+
+        <div id="viewFavorites" class="section-view">
+            <h2 style="margin-bottom: 1.5rem;">Favori İlanlarım</h2>
+            <div class="listings-grid" id="favoritesGrid"></div>
+        </div>
+
+        <div id="viewContact" class="section-view">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border);">
+                    <h2 style="color:var(--primary); margin-bottom:0.5rem; font-size:1.2rem;">💬 İlan Sohbetlerim</h2>
+                    <p style="color:var(--text-muted); margin-bottom:1rem; font-size:0.85rem;">Bir sohbete dokunarak mesajları okuyabilir ve yanıt yazabilirsiniz.</p>
+                    <div id="chatListContainer" style="max-height: 450px; overflow-y: auto;"></div>
+                </div>
+                <div>
+                    <div id="activeChatContainer">
+                        <div style="background:white; padding:3rem; border-radius:12px; border:1px solid var(--border); text-align:center; color:var(--text-muted);">
+                            <span style="font-size: 2.5rem;">💬</span>
+                            <p style="margin-top:1rem;">Sol taraftan bir sohbet seçin veya bir ilana girip soru sorun.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- YÖNETİCİ / ADMIN PANELİ -->
+        <div id="viewAdmin" class="section-view">
+            <h2 style="margin-bottom: 1rem; color:#1e293b;">PazarSepeti Yönetim Paneli (Admin Modu)</h2>
+            
+            <!-- ADMIN IBAN AYARLAMA KARTI -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color:var(--primary); margin-bottom:0.8rem; font-size:1.1rem;">💳 Sistem Ödeme (IBAN) Ayarla</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Premium üyelik ödemelerinin geleceği yönetici IBAN numarasını buradan güncelleyebilirsiniz.</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="adminIbanInput" placeholder="TR00 0000 0000 0000 0000 0000 00" style="flex:1; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-family:monospace; font-weight:bold;">
+                    <button class="btn btn-accent" onclick="saveAdminIban()">IBAN'ı Kaydet</button>
+                </div>
+            </div>
+
+            <!-- KULLANICILAR TABLOSU -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color:#1e293b; margin-bottom:0.5rem; font-size:1.1rem;">Kayıtlı Kullanıcılar ve Premium Onayları / Ban Yönetimi</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>E-posta</th>
+                                <th>Telefon</th>
+                                <th>IBAN</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AKTİF İLANLAR TABLOSU -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color:#1e293b; margin-bottom:0.5rem; font-size:1.1rem;">Aktif İlanlar</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>İlan Başlığı</th>
+                                <th>Kategori</th>
+                                <th>Fiyat</th>
+                                <th>Ekleyen</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminListingsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TÜM İLAN SORULARI VE CHATLERİNİ KONTROL ETME -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border);">
+                <h3 style="color:var(--primary); margin-bottom:0.5rem; font-size:1.1rem;">💬 Tüm İlan Sohbetleri Denetim Paneli</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Platformdaki tüm alıcı ve satıcı görüşmelerini inceleyebilir, şüpheli yazışmaları silebilirsiniz.</p>
+                <div id="adminAllChatsContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GELİŞTİRİLMİŞ CANLI DESTEK ASİSTANI WIDGET -->
+    <div class="bot-widget-btn" onclick="toggleBotWindow()" title="Destek Asistanı">💬</div>
+    <div class="bot-window" id="botWindow">
+        <div class="bot-header">
+            <span>🤖 PazarSepeti Canlı Asistan</span>
+            <button onclick="toggleBotWindow()" style="background:none; border:none; color:white; font-size:1rem; cursor:pointer;">✕</button>
+        </div>
+        <div class="bot-messages" id="botMessagesContainer">
+            <div class="bot-bubble incoming">Merhaba! Ben PazarSepeti Asistanıyım. İlan verme, IBAN ile ödeme, premium üyelik veya site kullanımı hakkında bana soru sorabilirsin.</div>
+        </div>
+        <div class="bot-input-area">
+            <input type="text" id="botInputText" placeholder="Sorunuzu yazın..." onkeydown="if(event.key==='Enter') sendBotMessage()">
+            <button class="btn btn-accent" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="sendBotMessage()">Gönder</button>
+        </div>
     </div>
 
     <script>
-        // Sayfa yüklendiğinde çalışacak kontrol
-        window.onload = function() {
-            const kayitliKullanici = localStorage.getItem('aktifKullanici');
-            
-            if (kayitliKullanici) {
-                // Eğer daha önceden giriş yapıldıysa doğrudan paneli göster
-                paneliGoster(kayitliKullanici);
-            }
+        const ADMIN_EMAIL = "osmikdesiyor66@gmail.com";
+
+        let currentUser = null;
+        let selectedListingImages = [];
+        let activeChatId = null;
+        let searchQuery = "";
+        let listingToDeleteId = null;
+
+        let favorites = JSON.parse(localStorage.getItem("pazar_favorites")) || [];
+        
+        let systemSettings = JSON.parse(localStorage.getItem("pazar_settings")) || {
+            adminIban: "TR33 0006 1005 5000 0000 0000 01"
         };
 
-        // Giriş yapma fonksiyonu
-        function girisYap() {
-            const ad = document.getElementById('kullaniciAdi').value.trim();
-            if (ad !== "") {
-                // Bilgiyi tarayıcının kalıcı hafızasına kaydet
-                localStorage.setItem('aktifKullanici', ad);
-                paneliGoster(ad);
+        let users = JSON.parse(localStorage.getItem("pazar_users")) || [
+            { name: "Admin Sistem", email: ADMIN_EMAIL, phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı", isBanned: false },
+            { name: "sferpKFNSDLKKf", email: "ksdvho@GALKKKEOI", phone: "KKSDHVPISDUfgh", iban: "osidifFWPDIUfhed", regDate: "10.05.2026", isPremium: false, premiumStatus: "Normal", isBanned: false }
+        ];
+
+        let chats = JSON.parse(localStorage.getItem("pazar_chats")) || [
+            {
+                id: 1,
+                listingId: 1,
+                listingTitle: "2020 Model Hatasız Aile Sedanı",
+                ownerEmail: ADMIN_EMAIL,
+                senderEmail: "ksdvho@GALKKKEOI",
+                senderName: "sferpKFNSDLKKf",
+                messages: [
+                    { sender: "ksdvho@GALKKKEOI", text: "Merhaba, aracı inceledim son fiyat ne olur?", time: "12:30" }
+                ]
+            }
+        ];
+
+        let listings = JSON.parse(localStorage.getItem("pazar_listings")) || [
+            { 
+                id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", 
+                iban: "TR33 0006 1005 5000 0000 0000 01",
+                location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, 
+                user: "Admin Sistem", email: ADMIN_EMAIL, phone: "05000000000",
+                views: 42, 
+                carDetails: { year: "2020", km: "75.000", gear: "Otomatik", fuel: "Dizel", hp: "136", engine: "1598 cc", body: "Sedan", color: "Beyaz" },
+                parts: {
+                    "Sol Ön Çamurluk": "Orijinal", "Ön Kaput": "Orijinal", "Sağ Ön Çamurluk": "Orijinal",
+                    "Sol Ön Kapı": "Orijinal", "Tavan": "Orijinal", "Sağ Ön Kapı": "Orijinal",
+                    "Sol Arka Kapı": "Orijinal", "Bagaj Kapağı": "Orijinal", "Sağ Arka Kapı": "Orijinal",
+                    "Sol Arka Çamurluk": "Orijinal", "Sağ Arka Çamurluk": "Orijinal"
+                }, images: ["https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400"] 
+            }
+        ];
+
+        let carPartsStatus = {
+            "Sol Ön Çamurluk": "Orijinal", "Ön Kaput": "Orijinal", "Sağ Ön Çamurluk": "Orijinal",
+            "Sol Ön Kapı": "Orijinal", "Tavan": "Orijinal", "Sağ Ön Kapı": "Orijinal",
+            "Sol Arka Kapı": "Orijinal", "Bagaj Kapağı": "Orijinal", "Sağ Arka Kapı": "Orijinal",
+            "Sol Arka Çamurluk": "Orijinal", "Sağ Arka Çamurluk": "Orijinal"
+        };
+
+        // Sayfa yüklendiğinde hafızada açık oturum var mı kontrol et
+        window.onload = function() {
+            const aktifKullaniciEmail = localStorage.getItem('oturumKullaniciEmail');
+            if (aktifKullaniciEmail) {
+                const foundUser = users.find(u => u.email.trim().toLowerCase() === aktifKullaniciEmail.toLowerCase());
+                if (foundUser && !foundUser.isBanned) {
+                    currentUser = foundUser;
+                } else {
+                    localStorage.removeItem('oturumKullaniciEmail');
+                }
+            }
+            updateHeaderUserUI();
+            renderListings();
+        };
+
+        function saveData() {
+            localStorage.setItem("pazar_listings", JSON.stringify(listings));
+            localStorage.setItem("pazar_users", JSON.stringify(users));
+            localStorage.setItem("pazar_favorites", JSON.stringify(favorites));
+            localStorage.setItem("pazar_chats", JSON.stringify(chats));
+            localStorage.setItem("pazar_settings", JSON.stringify(systemSettings));
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = "flex"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+        function switchAuthTab(tab) {
+            if (tab === 'login') {
+                document.getElementById('tabLoginBtn').classList.add('active');
+                document.getElementById('tabRegisterBtn').classList.remove('active');
+                document.getElementById('loginForm').style.display = 'block';
+                document.getElementById('registerForm').style.display = 'none';
             } else {
-                alert("Lütfen bir kullanıcı adı girin!");
+                document.getElementById('tabRegisterBtn').classList.add('active');
+                document.getElementById('tabLoginBtn').classList.remove('active');
+                document.getElementById('registerForm').style.display = 'block';
+                document.getElementById('loginForm').style.display = 'none';
             }
         }
 
-        // Arayüzü panel görünümüne geçiren fonksiyon
-        function paneliGoster(kullanici) {
-            document.getElementById('girisEkrani').classList.remove('aktif');
-            document.getElementById('girisEkrani').classList.add('gizli');
+        function switchView(viewName) {
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
 
-            document.getElementById('panelEkrani').classList.remove('gizli');
-            document.getElementById('panelEkrani').classList.add('aktif');
-
-            document.getElementById('karsilamaMesaji').innerText = "Hoş Geldiniz, " + kullanici + "!";
+            if (viewName === 'home') {
+                document.getElementById('viewHome').classList.add('active');
+                document.getElementById('navHome').classList.add('active');
+                renderListings();
+            } else if (viewName === 'myListings') {
+                if (!currentUser) { alert("İlanlarınızı görebilmek için giriş yapmalısınız!"); openModal('auth-modal'); return; }
+                document.getElementById('viewMyListings').classList.add('active');
+                document.getElementById('navMyListings').classList.add('active');
+                renderMyListings();
+            } else if (viewName === 'favorites') {
+                document.getElementById('viewFavorites').classList.add('active');
+                document.getElementById('navFavorites').classList.add('active');
+                renderFavorites();
+            } else if (viewName === 'contact') {
+                if (!currentUser) { alert("Sohbetlerinizi görebilmek için giriş yapmalısınız!"); openModal('auth-modal'); return; }
+                document.getElementById('viewContact').classList.add('active');
+                document.getElementById('navContact').classList.add('active');
+                renderChatList();
+            } else if (viewName === 'admin') {
+                if (!currentUser || currentUser.email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                    alert("Bu alana yalnızca admin erişebilir!");
+                    switchView('home');
+                    return;
+                }
+                document.getElementById('viewAdmin').classList.add('active');
+                document.getElementById('navAdmin').classList.add('active');
+                renderAdminPanelData();
+            }
         }
 
-        // Çıkış yapma ve hafızayı temizleme fonksiyonu
-        function cikisYap() {
-            // Kayıtlı oturumu sil
-            localStorage.removeItem('aktifKullanici');
+        function handleRegister(event) {
+            event.preventDefault();
+            const name = document.getElementById("regName").value;
+            const email = document.getElementById("regEmail").value;
+            const phone = document.getElementById("regPhone").value;
+            const iban = document.getElementById("regIban").value;
 
-            // Ekranları başa döndür
-            document.getElementById('panelEkrani').classList.remove('aktif');
-            document.getElementById('panelEkrani').classList.add('gizli');
+            if (users.some(u => u.email === email)) {
+                alert("Bu e-posta adresiyle zaten kayıt olunmuş!");
+                return;
+            }
 
-            document.getElementById('girisEkrani').classList.remove('gizli');
-            document.getElementById('girisEkrani').classList.add('aktif');
+            const newUser = {
+                name, email, phone, iban,
+                regDate: new Date().toLocaleDateString('tr-TR'),
+                isPremium: email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase(), 
+                premiumStatus: email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase() ? "Onaylı" : "Normal", 
+                isBanned: false
+            };
+            users.push(newUser);
+            currentUser = newUser;
             
-            document.getElementById('kullaniciAdi').value = "";
+            // Oturumu kalıcı hale getir
+            localStorage.setItem('oturumKullaniciEmail', newUser.email);
+
+            saveData();
+            closeModal('auth-modal');
+            updateHeaderUserUI();
+            alert("Kayıt başarıyla oluşturuldu ve giriş yapıldı!");
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+
+            let existingUser = users.find(u => u.email.trim().toLowerCase() === email);
+            if (!existingUser) {
+                if (email === ADMIN_EMAIL.toLowerCase()) {
+                    existingUser = {
+                        name: "Admin Sistem", email: ADMIN_EMAIL, phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı", isBanned: false
+                    };
+                    users.push(existingUser);
+                    saveData();
+                } else {
+                    alert("Bu e-posta ile kayıtlı kullanıcı bulunamadı! Lütfen önce Kayıt Olun.");
+                    switchAuthTab('register');
+                    return;
+                }
+            }
+
+            if (existingUser.isBanned) {
+                alert("Bu hesap sistem yöneticisi tarafından banlanmıştır / engellenmiştir.");
+                return;
+            }
+
+            currentUser = existingUser;
+            
+            // Oturumu kalıcı hale getir
+            localStorage.setItem('oturumKullaniciEmail', existingUser.email);
+
+            closeModal('auth-modal');
+            updateHeaderUserUI();
+            alert("Giriş yapıldı!");
+        }
+
+        function handleLogout() {
+            // Hafızadaki oturumu temizle
+            localStorage.removeItem('oturumKullaniciEmail');
+            currentUser = null;
+            activeChatId = null;
+            updateHeaderUserUI();
+            switchView('home');
+            alert("Hesaptan çıkış yapıldı.");
+        }
+
+        function updateHeaderUserUI() {
+            const actionsDiv = document.getElementById("headerActions");
+            const adminNav = document.getElementById("navAdmin");
+
+            if (currentUser) {
+                if (currentUser.email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                    adminNav.style.display = "inline-block";
+                } else {
+                    adminNav.style.display = "none";
+                }
+
+                actionsDiv.innerHTML = `
+                    <div class="profile-menu-container">
+                        <div class="profile-trigger" onclick="toggleProfileDropdown(event)">
+                            👤 ${currentUser.name} ${currentUser.isPremium ? '👑' : ''} ▼
+                        </div>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <a class="dropdown-item" onclick="openAccountInfo()">📊 Hesap Bilgilerim</a>
+                            <a class="dropdown-item" onclick="switchView('myListings')">📋 İlanlarım</a>
+                            <a class="dropdown-item danger" onclick="handleLogout()">🚪 Çıkış Yap</a>
+                        </div>
+                    </div>
+                    <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
+                `;
+            } else {
+                adminNav.style.display = "none";
+                actionsDiv.innerHTML = `
+                    <button class="btn btn-outline" onclick="openModal('auth-modal')">Giriş / Kayıt Ol</button>
+                    <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
+                `;
+            }
+        }
+
+        function toggleProfileDropdown(e) {
+            e.stopPropagation();
+            const dropdown = document.getElementById("profileDropdown");
+            dropdown.classList.toggle("show");
+        }
+
+        window.onclick = function() {
+            const dropdown = document.getElementById("profileDropdown");
+            if (dropdown && dropdown.classList.contains("show")) {
+                dropdown.classList.remove("show");
+            }
+        }
+
+        function openAccountInfo() {
+            if (!currentUser) return;
+            const myList = listings.filter(l => l.email === currentUser.email);
+            const totalViews = myList.reduce((sum, item) => sum + (item.views || 0), 0);
+
+            document.getElementById("accountInfoContent").innerHTML = `
+                <p><strong>Ad Soyad:</strong> ${currentUser.name}</p>
+                <p><strong>E-posta:</strong> ${currentUser.email}</p>
+                <p><strong>Telefon:</strong> ${currentUser.phone}</p>
+                <p><strong>IBAN:</strong> ${currentUser.iban || 'Belirtilmemiş'}</p>
+                <p><strong>Üyelik Tipi:</strong> ${currentUser.isPremium ? '👑 Premium Üye' : 'Standart Üye'}</p>
+                <hr style="border:0; border-top:1px solid var(--border); margin:5px 0;">
+                <p><strong>Toplam İlan Sayınız:</strong> ${myList.length} adet</p>
+                <p><strong>Toplam Ziyaretçi:</strong> ${totalViews} görüntülenme</p>
+            `;
+            openModal('account-info-modal');
+        }
+
+        function openListingModal() {
+            if (!currentUser) {
+                alert("İlan verebilmek için önce giriş yapmalı veya kayıt olmalısınız!");
+                openModal('auth-modal');
+                return;
+            }
+            selectedListingImages = [];
+            document.getElementById("galleryPreviewContainer").innerHTML = "";
+            document.getElementById("hiddenFileinput").value = "";
+            
+            if (currentUser.iban) {
+                document.getElementById("newIban").value = currentUser.iban;
+            }
+
+            const checkbox = document.getElementById("isPremium");
+            const statusText = document.getElementById("premiumStatusText");
+            
+            if (currentUser.isPremium) {
+                checkbox.checked = true; checkbox.disabled = false;
+                statusText.innerText = "👑 Premium hesabınız aktif.";
+            } else {
+                checkbox.checked = false; checkbox.disabled = false;
+                statusText.innerText = "Standart ilan (50 TL ücretle Premium yapabilirsiniz).";
+            }
+            openModal('listing-modal');
+            renderCarPartsForm();
+        }
+
+        function handleGallerySelection(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            const previewContainer = document.getElementById("galleryPreviewContainer");
+            previewContainer.innerHTML = "";
+            selectedListingImages = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedListingImages.push(e.target.result);
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.className = "gallery-thumb";
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        }
+
+        function checkPremiumStatus(checkbox) {
+            if (!currentUser.isPremium && checkbox.checked) {
+                checkbox.checked = false;
+                document.getElementById("adminIbanDisplayBox").innerText = systemSettings.adminIban;
+                openModal('payment-modal');
+            }
+        }
+
+        function submitPremiumRequest() {
+            const fileInput = document.getElementById("receiptFileInput");
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Lütfen ödeme dekontunu yükleyin!");
+                return;
+            }
+            currentUser.isPremium = true;
+            currentUser.premiumStatus = "Onaylı";
+            saveData();
+            closeModal('payment-modal');
+            updateHeaderUserUI();
+            alert("Hesabınız ve ilanınız Premium yapıldı.");
+        }
+
+        function toggleCategoryFields(category) {
+            document.getElementById("vasitaFields").style.display = category === "Vasıta" ? "block" : "none";
+        }
+
+        function renderCarPartsForm() {
+            const container = document.getElementById("carPartsContainer");
+            container.innerHTML = "";
+            const statuses = ["Orijinal", "Boyalı", "Değişen"];
+            const sections = [
+                { title: "🚗 ÖN BÖLÜM", parts: ["Sol Ön Çamurluk", "Ön Kaput", "Sağ Ön Çamurluk"] },
+                { title: "🚙 ORTA KABİN", parts: ["Sol Ön Kapı", "Tavan", "Sağ Ön Kapı"] },
+                { title: "🚐 ARKA KABİN", parts: ["Sol Arka Kapı", "Bagaj Kapağı", "Sağ Arka Kapı"] },
+                { title: "🏁 ARKA BÖLÜM", parts: ["Sol Arka Çamurluk", "", "Sağ Arka Çamurluk"] }
+            ];
+
+            sections.forEach(sec => {
+                const titleEl = document.createElement("div");
+                titleEl.className = "car-section-title"; titleEl.innerText = sec.title; container.appendChild(titleEl);
+                const rowDiv = document.createElement("div"); rowDiv.className = "car-row";
+
+                sec.parts.forEach(partName => {
+                    if (partName === "") {
+                        const emptySpace = document.createElement("div"); emptySpace.style.flex = "1"; rowDiv.appendChild(emptySpace);
+                        return;
+                    }
+                    const currentStatus = carPartsStatus[partName];
+                    const btn = document.createElement("button"); btn.type = "button";
+                    let statusClass = currentStatus === "Boyalı" ? "selected-boyali" : currentStatus === "Değişen" ? "selected-degisen" : "selected-orijinal";
+                    btn.className = `car-part-btn ${statusClass}`;
+                    btn.innerHTML = `${partName}<br><span style="font-size:0.62rem;">(${currentStatus})</span>`;
+                    btn.onclick = () => {
+                        let nextIdx = (statuses.indexOf(carPartsStatus[partName]) + 1) % statuses.length;
+                        carPartsStatus[partName] = statuses[nextIdx];
+                        renderCarPartsForm();
+                    };
+                    rowDiv.appendChild(btn);
+                });
+                container.appendChild(rowDiv);
+            });
+        }
+
+        function saveListing(event) {
+            event.preventDefault();
+            if (!currentUser) return;
+
+            const category = document.getElementById("newCategory").value;
+            const title = document.getElementById("newTitle").value;
+            const price = document.getElementById("newPrice").value;
+            const iban = document.getElementById("newIban").value;
+            const location = document.getElementById("newLocation").value;
+            const condition = document.getElementById("newCondition").value;
+            const isPremium = currentUser.isPremium && document.getElementById("isPremium").checked;
+
+            let carDetails = null;
+            if (category === "Vasıta") {
+                carDetails = {
+                    year: document.getElementById("vYear").value || "-",
+                    km: document.getElementById("vKm").value || "-",
+                    gear: document.getElementById("vGear").value,
+                    fuel: document.getElementById("vFuel").value,
+                    hp: document.getElementById("vHp").value || "-",
+                    engine: document.getElementById("vEngine").value || "-",
+                    body: document.getElementById("vBody").value || "-",
+                    color: document.getElementById("vColor").value || "-"
+                };
+            }
+
+            let images = selectedListingImages.length > 0 ? [...selectedListingImages] : [category === "Vasıta" ? "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400" : "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"];
+
+            const newListing = {
+                id: Date.now(), title, category, price, iban, location, condition, isPremium,
+                user: currentUser.name, email: currentUser.email, phone: currentUser.phone,
+                views: 1, carDetails, parts: category === "Vasıta" ? {...carPartsStatus} : null, images
+            };
+
+            listings.unshift(newListing);
+            saveData();
+            closeModal('listing-modal');
+            switchView('home');
+            alert("İlanınız başarıyla yayınlandı!");
+        }
+
+        function toggleFavorite(id, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(id);
+            if (index > -1) { favorites.splice(index, 1); } else { favorites.push(id); }
+            saveData();
+            renderListings(); renderFavorites();
+        }
+
+        function openDetailModal(id) {
+            const item = listings.find(l => l.id === id);
+            if (!item) return;
+            item.views = (item.views || 0) + 1;
+            saveData();
+
+            let imagesHtml = item.images.map(img => `<img src="${img}" alt="İlan Görseli">`).join('');
+            
+            let carSpecsHtml = "";
+            if (item.carDetails) {
+                carSpecsHtml = `
+                    <div style="margin-top:1rem; background:#f1f5f9; padding:1rem; border-radius:8px; border:1px solid var(--border);">
+                        <strong style="color:var(--primary); display:block; margin-bottom:0.6rem;">🚗 Araç Teknik Özellikleri</strong>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:0.85rem;">
+                            <div><strong>Model Yılı:</strong> ${item.carDetails.year}</div>
+                            <div><strong>Kilometre:</strong> ${item.carDetails.km} KM</div>
+                            <div><strong>Vites Tipi:</strong> ${item.carDetails.gear}</div>
+                            <div><strong>Yakıt Türü:</strong> ${item.carDetails.fuel}</div>
+                            <div><strong>Motor Gücü:</strong> ${item.carDetails.hp} HP</div>
+                            <div><strong>Motor Hacmi:</strong> ${item.carDetails.engine}</div>
+                            <div><strong>Kasa Tipi:</strong> ${item.carDetails.body}</div>
+                            <div><strong>Renk:</strong> ${item.carDetails.color}</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let partsHtml = "";
+            if (item.parts) {
+                let partsRows = "";
+                for (let [part, status] of Object.entries(item.parts)) {
+                    let badgeClass = status === "Boyalı" ? "selected-boyali" : status === "Değişen" ? "selected-degisen" : "selected-orijinal";
+                    partsRows += `<div style="display:flex; justify-content:space-between; padding:4px 8px; border-bottom:1px solid #334155; font-size:0.8rem;"><span>${part}</span><span style="font-weight:bold; padding:2px 6px; border-radius:4px;" class="${badgeClass}">${status}</span></div>`;
+                }
+                partsHtml = `<div style="margin-top:1rem;"><strong>🛠️ 3D Araç Ekspertiz Raporu:</strong><div style="background:#0f172a; color:white; padding:10px; border-radius:8px; margin-top:5px;">${partsRows}</div></div>`;
+            }
+
+            document.getElementById("detailContent").innerHTML = `
+                <h2 style="color:var(--primary); margin-bottom:0.5rem;">${item.title}</h2>
+                <div style="font-size:1.4rem; font-weight:bold; color:var(--primary); margin-bottom:1rem;">${item.price}</div>
+                <div class="detail-gallery">${imagesHtml}</div>
+                <div style="display:flex; gap:1.5rem; font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
+                    <span>📍 Konum: <strong>${item.location}</strong></span>
+                    <span>📂 Kategori: <strong>${item.category}</strong></span>
+                    <span>👁️ Ziyaretçi: <strong>${item.views}</strong></span>
+                </div>
+                
+                <div style="background: #eef2ff; border: 1px solid #c7d2fe; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <strong style="color: var(--primary); display: block; margin-bottom: 0.3rem;">💳 Satış ve Ödeme Bilgileri (IBAN)</strong>
+                    <p style="font-size: 0.9rem; font-family: monospace; font-weight: bold; color: #1e1b4b; background: white; padding: 0.5rem; border-radius: 4px; border: 1px solid #e0e0e0;">${item.iban || 'Satıcı IBAN belirtmemiş'}</p>
+                    <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">* Satın alma işlemi için yukarıdaki IBAN adresine açıklama kısmına ilan adını yazarak ödeme yapabilirsiniz.</span>
+                </div>
+
+                ${carSpecsHtml}
+                ${partsHtml}
+                <div class="seller-card">
+                    <h3 style="font-size:1rem; margin-bottom:0.5rem; color:var(--primary);">👤 İlan Sahibi ve Soru Sor</h3>
+                    <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>Satıcı:</strong> ${item.user} (${item.email})</p>
+                    <p style="font-size:0.85rem; margin-bottom:1rem;"><strong>Telefon:</strong> ${item.phone || 'Belirtilmemiş'}</p>
+                    
+                    <div style="border-top:1px dashed var(--border); padding-top:1rem;">
+                        <h4 style="font-size:0.9rem; margin-bottom:0.5rem; color:var(--primary);">💬 İlan Hakkında Soru Sor & Dekont Paylaş</h4>
+                        <div class="form-group"><textarea id="questionText" placeholder="Örn: Merhaba, ödemeyi IBAN'ınıza yaptım, dekontu iletiyorum..." rows="2" style="width:100%; padding:0.5rem; font-size:0.85rem; border:1px solid var(--border); border-radius:6px; outline:none;"></textarea></div>
+                        <button class="btn btn-accent" style="padding:0.5rem 1rem; font-size:0.85rem;" onclick="startOrOpenChat(${item.id})">Sohbeti Başlat & Mesajı Gönder</button>
+                    </div>
+                </div>
+            `;
+            openModal('detail-modal');
+        }
+
+        function startOrOpenChat(listingId) {
+            if (!currentUser) {
+                alert("Soru sorabilmek için giriş yapmalısınız!");
+                openModal('auth-modal');
+                return;
+            }
+            const item = listings.find(l => l.id === listingId);
+            const msgText = document.getElementById("questionText").value.trim();
+
+            if (!msgText) {
+                alert("Lütfen bir mesaj yazın!");
+                return;
+            }
+
+            if (item.email === currentUser.email) {
+                alert("Kendi ilanınıza soru soramazsınız!");
+                return;
+            }
+
+            let existingChat = chats.find(c => c.listingId === item.id && c.senderEmail === currentUser.email);
+
+            if (existingChat) {
+                existingChat.messages.push({
+                    sender: currentUser.email,
+                    text: msgText,
+                    time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                });
+                activeChatId = existingChat.id;
+            } else {
+                const newChat = {
+                    id: Date.now(),
+                    listingId: item.id,
+                    listingTitle: item.title,
+                    ownerEmail: item.email,
+                    senderEmail: currentUser.email,
+                    senderName: currentUser.name,
+                    messages: [
+                        { sender: currentUser.email, text: msgText, time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) }
+                    ]
+                };
+                chats.unshift(newChat);
+                activeChatId = newChat.id;
+            }
+
+            saveData();
+            closeModal('detail-modal');
+            switchView('contact');
+        }
+
+        function renderChatList() {
+            const container = document.getElementById("chatListContainer");
+            const badge = document.getElementById("messageBadge");
+            container.innerHTML = "";
+
+            if (!currentUser) return;
+
+            const myChats = chats.filter(c => c.ownerEmail === currentUser.email || c.senderEmail === currentUser.email);
+
+            if (myChats.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); font-size:0.9rem;">Henüz aktif bir sohbetiniz bulunmuyor.</p>`;
+                document.getElementById("activeChatContainer").innerHTML = `
+                    <div style="background:white; padding:3rem; border-radius:12px; border:1px solid var(--border); text-align:center; color:var(--text-muted);">
+                        <span style="font-size: 2.5rem;">💬</span>
+                        <p style="margin-top:1rem;">Aktif sohbet bulunmuyor.</p>
+                    </div>`;
+                badge.style.display = "none";
+                return;
+            }
+
+            badge.innerText = myChats.length;
+            badge.style.display = "inline-block";
+
+            myChats.forEach(chat => {
+                const lastMsg = chat.messages[chat.messages.length - 1];
+                const otherPerson = chat.ownerEmail === currentUser.email ? chat.senderName : "İlan Sahibi";
+                const div = document.createElement("div");
+                div.className = `chat-list-item ${activeChatId === chat.id ? 'unread' : ''}`;
+                div.onclick = () => { activeChatId = chat.id; renderChatList(); renderActiveChat(); };
+                div.innerHTML = `
+                    <div style="font-size:0.75rem; color:var(--primary); font-weight:bold; margin-bottom:0.2rem;">${chat.listingTitle}</div>
+                    <div style="font-size:0.9rem; font-weight:bold; margin-bottom:0.2rem;">${otherPerson} ile Sohbet</div>
+                    <div style="font-size:0.8rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Son: ${lastMsg.text}</div>
+                `;
+                container.appendChild(div);
+            });
+
+            if (!activeChatId && myChats.length > 0) {
+                activeChatId = myChats[0].id;
+            }
+            if (activeChatId) {
+                renderActiveChat();
+            }
+        }
+
+        function renderActiveChat() {
+            const container = document.getElementById("activeChatContainer");
+            const chat = chats.find(c => c.id === activeChatId);
+            if (!chat) return;
+
+            const otherPerson = chat.ownerEmail === currentUser.email ? chat.senderName : "İlan Sahibi";
+
+            let messagesHtml = "";
+            chat.messages.forEach(m => {
+                let isMe = m.sender === currentUser.email;
+                let bubbleClass = isMe ? "outgoing" : "incoming";
+                messagesHtml += `
+                    <div class="chat-bubble ${bubbleClass}">
+                        <div style="font-size:0.8rem; margin-bottom:2px; opacity:0.8;">${isMe ? 'Siz' : otherPerson} (${m.time})</div>
+                        <div>${m.text}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="chat-window-box">
+                    <div class="chat-header">
+                        <span>💬 ${chat.listingTitle} (${otherPerson})</span>
+                    </div>
+                    <div class="chat-messages" id="chatMessagesBox">
+                        ${messagesHtml}
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatMessageInput" placeholder="Mesajınızı yazın veya dekont paylaşın..." onkeydown="if(event.key==='Enter') sendChatMessage(${chat.id})">
+                        <button class="btn btn-accent" onclick="sendChatMessage(${chat.id})">Gönder</button>
+                    </div>
+                </div>
+            `;
+
+            const msgBox = document.getElementById("chatMessagesBox");
+            msgBox.scrollTop = msgBox.scrollHeight;
+        }
+
+        function sendChatMessage(chatId) {
+            const input = document.getElementById("chatMessageInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chat = chats.find(c => c.id === chatId);
+            if (chat) {
+                chat.messages.push({
+                    sender: currentUser.email,
+                    text: text,
+                    time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+                });
+                input.value = "";
+                saveData();
+                renderChatList();
+                renderActiveChat();
+            }
+        }
+
+        function promptRemoveListing(id, event) {
+            event.stopPropagation();
+            listingToDeleteId = id;
+            openModal('remove-choice-modal');
+        }
+
+        function executeNormalRemove() {
+            closeModal('remove-choice-modal');
+            if (confirm("Bu ilanı normal olarak kaldırmak istediğinize emin misiniz?")) {
+                listings = listings.filter(l => l.id !== listingToDeleteId);
+                saveData();
+                renderListings(); 
+                renderMyListings();
+                renderAdminPanelData();
+                alert("İlan kaldırıldı.");
+            }
+        }
+
+        function openSoldReceiptModal() {
+            closeModal('remove-choice-modal');
+            openModal('sold-receipt-modal');
+        }
+
+        function executeSoldRemove() {
+            const fileInput = document.getElementById("soldReceiptInput");
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert("Satış işlemi için lütfen ödeme dekontu / transfer görselini yükleyin!");
+                return;
+            }
+
+            listings = listings.filter(l => l.id !== listingToDeleteId);
+            saveData();
+            closeModal('sold-receipt-modal');
+            renderListings(); 
+            renderMyListings();
+            renderAdminPanelData();
+            alert("Tebrikler! İlan 'Satıldı' olarak işaretlendi ve sistemden başarıyla kaldırıldı.");
+        }
+
+        function adminRemoveListing(id) {
+            if (confirm("Yönetici yetkisiyle bu ilanı kaldırmak istiyor musunuz?")) {
+                listings = listings.filter(l => l.id !== id);
+                saveData();
+                renderListings();
+                renderAdminPanelData();
+                alert("İlan yönetici tarafından kaldırıldı.");
+            }
+        }
+
+        function saveAdminIban() {
+            const newIban = document.getElementById("adminIbanInput").value.trim();
+            if (!newIban) {
+                alert("Lütfen geçerli bir IBAN girin!");
+                return;
+            }
+            systemSettings.adminIban = newIban;
+            saveData();
+            alert("Admin IBAN numarası güncellendi.");
+        }
+
+        function toggleUserBan(email) {
+            const targetUser = users.find(u => u.email === email);
+            if (!targetUser) return;
+            if (targetUser.email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                alert("Ana yönetici hesabı banlanamaz!");
+                return;
+            }
+            targetUser.isBanned = !targetUser.isBanned;
+            saveData();
+            renderAdminPanelData();
+            alert(`Kullanıcı durumu: ${targetUser.isBanned ? 'Banlandı / Engellendi' : 'Aktif'}`);
+        }
+
+        function adminDeleteChat(chatId) {
+            if (confirm("Bu sohbeti tamamen silmek istediğinize emin misiniz?")) {
+                chats = chats.filter(c => c.id !== chatId);
+                saveData();
+                renderAdminPanelData();
+                alert("Sohbet silindi.");
+            }
+        }
+
+        function renderAdminPanelData() {
+            document.getElementById("adminIbanInput").value = systemSettings.adminIban;
+
+            // Kullanıcılar Tablosu
+            const userTableBody = document.getElementById("adminUsersTableBody");
+            userTableBody.innerHTML = "";
+            users.forEach(u => {
+                userTableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${u.name}</strong></td>
+                        <td>${u.email}</td>
+                        <td>${u.phone || '-'}</td>
+                        <td>${u.iban || '-'}</td>
+                        <td><span style="color:${u.isBanned ? '#ef4444' : '#10b981'}; font-weight:bold;">${u.isBanned ? 'Banlı' : u.premiumStatus}</span></td>
+                        <td>
+                            ${u.email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase() ? `<button class="btn-danger" onclick="toggleUserBan('${u.email}')">${u.isBanned ? 'Engeli Kaldır' : 'Banla'}</button>` : 'Sistem'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Aktif İlanlar Tablosu
+            const listingTableBody = document.getElementById("adminListingsTableBody");
+            listingTableBody.innerHTML = "";
+            if (listings.length === 0) {
+                listingTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Aktif ilan bulunmuyor.</td></tr>`;
+            } else {
+                listings.forEach(item => {
+                    listingTableBody.innerHTML += `
+                        <tr>
+                            <td><strong>${item.title}</strong></td>
+                            <td>${item.category}</td>
+                            <td>${item.price}</td>
+                            <td>${item.user} (${item.email})</td>
+                            <td><button class="btn-danger" onclick="adminRemoveListing(${item.id})">Kaldır</button></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Tüm Sohbetler Denetim Alanı
+            const allChatsContainer = document.getElementById("adminAllChatsContainer");
+            allChatsContainer.innerHTML = "";
+            if (chats.length === 0) {
+                allChatsContainer.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem;">Sistemde kayıtlı sohbet bulunmuyor.</p>`;
+            } else {
+                chats.forEach(chat => {
+                    let msgs = chat.messages.map(m => `<div style="font-size:0.8rem; margin-bottom:2px;"><strong>${m.sender}:</strong> ${m.text} <span style="color:#888; font-size:0.7rem;">(${m.time})</span></div>`).join('');
+                    allChatsContainer.innerHTML += `
+                        <div style="background:#f8fafc; border:1px solid var(--border); padding:1rem; border-radius:8px; display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <div style="font-weight:bold; font-size:0.9rem; color:var(--primary); margin-bottom:0.3rem;">📋 İlan: ${chat.listingTitle}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem;">Satıcı: ${chat.ownerEmail} | Alıcı: ${chat.senderEmail}</div>
+                                <div style="background:white; padding:0.5rem; border:1px solid var(--border); border-radius:6px; max-width:500px;">${msgs}</div>
+                            </div>
+                            <button class="btn-danger" onclick="adminDeleteChat(${chat.id})">Sohbeti Sil</button>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function toggleBotWindow() {
+            const win = document.getElementById("botWindow");
+            win.classList.toggle("show");
+        }
+
+        function sendBotMessage() {
+            const input = document.getElementById("botInputText");
+            const text = input.value.trim();
+            if (!text) return;
+
+            const container = document.getElementById("botMessagesContainer");
+            
+            container.innerHTML += `<div class="bot-bubble outgoing">${text}</div>`;
+            input.value = "";
+            container.scrollTop = container.scrollHeight;
+
+            setTimeout(() => {
+                let reply = "Bu konuda size yardımcı olabilirim. Lütfen detaylı bilgi için üst menüdeki sekmeleri kullanın.";
+                const lower = text.toLowerCase();
+
+                if (lower.includes("ilan") && (lower.includes("nasıl") || lower.includes("ver") || lower.includes("ekle"))) {
+                    reply = "Üst menüde yer alan sağ üst köşedeki **'+ İlan Ver'** butonuna tıklayarak ilan yayınlayabilirsiniz.";
+                } else if (lower.includes("iban") || lower.includes("para") || lower.includes("ödeme") || lower.includes("havale")) {
+                    reply = "Yönetici olarak üst menüden **ADMIN** paneline girerek Premium ödemeleri için kendi IBAN numaranızı güncelleyebilirsiniz.";
+                } else if (lower.includes("ban") || lower.includes("engelle") || lower.includes("kullanıcı")) {
+                    reply = "**ADMIN** panelinden kayıtlı kullanıcıları görüntüleyebilir, şüpheli kullanıcıları banlayabilir veya engellerini kaldırabilirsiniz.";
+                } else if (lower.includes("chat") || lower.includes("sohbet") || lower.includes("mesaj")) {
+                    reply = "Yine **ADMIN** panelinin alt kısmından sitedeki tüm alıcı ve satıcı ilan sohbetlerini denetleyebilir ve silebilirsiniz.";
+                } else if (lower.includes("merhaba") || lower.includes("selam")) {
+                    reply = "Merhaba! PazarSepeti admin asistanına hoş geldiniz.";
+                }
+
+                container.innerHTML += `<div class="bot-bubble incoming">${reply}</div>`;
+                container.scrollTop = container.scrollHeight;
+            }, 500);
+        }
+
+        function renderListings() {
+            const grid = document.getElementById("listingsGrid");
+            grid.innerHTML = "";
+            let sorted = [...listings].sort((a, b) => (b.isPremium === true) - (a.isPremium === true));
+
+            const filtered = sorted.filter(item => 
+                item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                item.category.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+
+            filtered.forEach(item => {
+                const isFav = favorites.includes(item.id);
+                const card = document.createElement("div");
+                card.className = `listing-card ${item.isPremium ? 'premium' : ''}`;
+                card.onclick = () => openDetailModal(item.id);
+
+                card.innerHTML = `
+                    ${item.isPremium ? '<div class="premium-badge">👑 PREMİUM</div>' : ''}
+                    <button class="fav-btn" onclick="toggleFavorite(${item.id}, event)">${isFav ? '❤️' : '🤍'}</button>
+                    <img src="${item.images[0]}" alt="${item.title}">
+                    <div class="listing-body">
+                        <div class="listing-title">${item.title}</div>
+                        <div class="listing-price">${item.price}</div>
+                        <div class="listing-footer"><span>${item.location}</span><span>👁️ ${item.views || 0}</span></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderMyListings() {
+            const grid = document.getElementById("myListingsGrid");
+            grid.innerHTML = "";
+            if (!currentUser) return;
+
+            const myList = listings.filter(item => item.email === currentUser.email);
+            if (myList.length === 0) {
+                grid.innerHTML = `<p style="color:var(--text-muted);">Henüz eklediğiniz bir ilan bulunmuyor.</p>`;
+                return;
+            }
+
+            myList.forEach(item => {
+                const card = document.createElement("div");
+                card.className = `listing-card`;
+                card.onclick = () => openDetailModal(item.id);
+
+                card.innerHTML = `
+                    <button class="btn-danger" onclick="promptRemoveListing(${item.id}, event)" style="position:absolute; top:10px; right:10px; z-index:10;">İlanı Kaldır</button>
+                    <img src="${item.images[0]}" alt="${item.title}">
+                    <div class="listing-body">
+                        <div class="listing-title">${item.title}</div>
+                        <div class="listing-price">${item.price}</div>
+                        <div class="listing-footer"><span>${item.location}</span><span>Ziyaret: ${item.views || 0}</span></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderFavorites() {
+            const grid = document.getElementById("favoritesGrid");
+            grid.innerHTML = "";
+            const favList = listings.filter(item => favorites.includes(item.id));
+
+            if (favList.length === 0) {
+                grid.innerHTML = `<p style="color:var(--text-muted);">Henüz favorilere eklediğiniz ilan yok.</p>`;
+                return;
+            }
+
+            favList.forEach(item => {
+                const card = document.createElement("div");
+                card.className = `listing-card ${item.isPremium ? 'premium' : ''}`;
+                card.onclick = () => openDetailModal(item.id);
+
+                card.innerHTML = `
+                    <button class="fav-btn" onclick="toggleFavorite(${item.id}, event)">❤️</button>
+                    <img src="${item.images[0]}" alt="${item.title}">
+                    <div class="listing-body">
+                        <div class="listing-title">${item.title}</div>
+                        <div class="listing-price">${item.price}</div>
+                        <div class="listing-footer"><span>${item.location}</span><span>${item.user}</span></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function handleSearch(value) {
+            searchQuery = value;
+            if (value.trim().toLowerCase() === "admin") {
+                if (!currentUser || currentUser.email.trim().toLowerCase() !== ADMIN_EMAIL.toLowerCase()) {
+                    alert("Admin paneline erişmek için admin hesabıyla giriş yapmalısınız!");
+                    return;
+                }
+                switchView('admin');
+                return;
+            }
+            switchView('home');
         }
     </script>
-
 </body>
 </html>
