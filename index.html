@@ -46,6 +46,7 @@
         .btn-outline { background-color: transparent; border: 1px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background-color: #eff6ff; }
         .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
+        .btn-warning { background-color: #f59e0b; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
 
         /* --- PROFİL MİNİ MENÜ --- */
         .profile-menu-container { position: relative; display: inline-block; }
@@ -143,6 +144,11 @@
 
         .section-view { display: none; }
         .section-view.active { display: block; }
+
+        /* ADMIN TABLO STİLLERİ */
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: white; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+        .admin-table th, .admin-table td { padding: 0.75rem 1rem; text-align: left; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+        .admin-table th { background: #1e293b; color: white; }
     </style>
 </head>
 <body>
@@ -271,7 +277,7 @@
         <div class="modal-box" style="text-align: center;">
             <h2>👑 Premium Üyelik Talebi</h2>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Yıllık <strong>50 TL</strong> havale yaptıktan sonra dekontu yükleyiniz.</p>
-            <div style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 6px; font-family: monospace; font-weight: bold; margin-bottom: 1rem; color: var(--primary);">
+            <div id="adminIbanDisplayBox" style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 6px; font-family: monospace; font-weight: bold; margin-bottom: 1rem; color: var(--primary);">
                 TR12 0001 0005 5555 4444 3333 01
             </div>
             <div class="form-group" style="text-align: left;">
@@ -341,7 +347,7 @@
                 <a class="nav-link" onclick="switchView('myListings')" id="navMyListings">İlanlarım</a>
                 <a class="nav-link" onclick="switchView('favorites')" id="navFavorites">Favorilerim</a>
                 <a class="nav-link" onclick="switchView('contact')" id="navContact">İletişim & Sohbetler <span class="badge-counter" id="messageBadge" style="display:none;">0</span></a>
-                <a class="nav-link" onclick="switchView('admin')" id="navAdmin" style="display:none; color:#ef4444;">Admin Paneli</a>
+                <a class="nav-link" onclick="switchView('admin')" id="navAdmin" style="display:none; color:#ef4444;">ADMIN</a>
             </nav>
 
             <div class="header-search">
@@ -390,11 +396,64 @@
             </div>
         </div>
 
+        <!-- YÖNETİCİ / ADMIN PANELİ -->
         <div id="viewAdmin" class="section-view">
-            <h2 style="margin-bottom: 1.5rem; color:#ef4444;">🛡️ Yönetici Kontrol Paneli</h2>
+            <h2 style="margin-bottom: 1rem; color:#1e293b;">PazarSepeti Yönetim Paneli (Admin Modu)</h2>
+            
+            <!-- ADMIN IBAN AYARLAMA KARTI -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color:var(--primary); margin-bottom:0.8rem; font-size:1.1rem;">💳 Sistem Ödeme (IBAN) Ayarla</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Premium üyelik ödemelerinin geleceği yönetici IBAN numarasını buradan güncelleyebilirsiniz.</p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="adminIbanInput" placeholder="TR00 0000 0000 0000 0000 0000 00" style="flex:1; padding:0.6rem; border:1px solid var(--border); border-radius:6px; font-family:monospace; font-weight:bold;">
+                    <button class="btn btn-accent" onclick="saveAdminIban()">IBAN'ı Kaydet</button>
+                </div>
+            </div>
+
+            <!-- KULLANICILAR TABLOSU -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color:#1e293b; margin-bottom:0.5rem; font-size:1.1rem;">Kayıtlı Kullanıcılar ve Premium Onayları / Ban Yönetimi</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>E-posta</th>
+                                <th>Telefon</th>
+                                <th>IBAN</th>
+                                <th>Durum</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- AKTİF İLANLAR TABLOSU -->
+            <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border); margin-bottom: 2rem;">
+                <h3 style="color:#1e293b; margin-bottom:0.5rem; font-size:1.1rem;">Aktif İlanlar</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>İlan Başlığı</th>
+                                <th>Kategori</th>
+                                <th>Fiyat</th>
+                                <th>Ekleyen</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminListingsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TÜM İLAN SORULARI VE CHATLERİNİ KONTROL ETME -->
             <div style="background:white; padding:1.5rem; border-radius:12px; border:1px solid var(--border);">
-                <p style="margin-bottom:1rem; font-size:0.9rem; color:var(--text-muted);">Platformdaki tüm ilanları denetleyebilir ve dilerseniz kaldırabilirsiniz.</p>
-                <div class="listings-grid" id="adminListingsGrid"></div>
+                <h3 style="color:var(--primary); margin-bottom:0.5rem; font-size:1.1rem;">💬 Tüm İlan Sohbetleri Denetim Paneli</h3>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">Platformdaki tüm alıcı ve satıcı görüşmelerini inceleyebilir, şüpheli yazışmaları silebilirsiniz.</p>
+                <div id="adminAllChatsContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;"></div>
             </div>
         </div>
     </div>
@@ -424,8 +483,13 @@
 
         let favorites = JSON.parse(localStorage.getItem("pazar_favorites")) || [];
         
+        let systemSettings = JSON.parse(localStorage.getItem("pazar_settings")) || {
+            adminIban: "TR33 0006 1005 5000 0000 0000 01"
+        };
+
         let users = JSON.parse(localStorage.getItem("pazar_users")) || [
-            { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005 5000 0000 0000 01", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı" }
+            { name: "Admin Sistem", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", regDate: "01.01.2026", isPremium: true, premiumStatus: "Onaylı", isBanned: false },
+            { name: "sferpKFNSDLKKf", email: "ksdvho@GALKKKEOI", phone: "KKSDHVPISDUfgh", iban: "osidifFWPDIUfhed", regDate: "10.05.2026", isPremium: false, premiumStatus: "Normal", isBanned: false }
         ];
 
         let chats = JSON.parse(localStorage.getItem("pazar_chats")) || [
@@ -434,10 +498,10 @@
                 listingId: 1,
                 listingTitle: "2020 Model Hatasız Aile Sedanı",
                 ownerEmail: "admin@pazarsepeti.com",
-                senderEmail: "ahmet@mail.com",
-                senderName: "Ahmet Yılmaz",
+                senderEmail: "ksdvho@GALKKKEOI",
+                senderName: "sferpKFNSDLKKf",
                 messages: [
-                    { sender: "ahmet@mail.com", text: "Merhaba, IBAN'a parayı gönderdim, dekontu paylaşıyorum.", time: "12:30" }
+                    { sender: "ksdvho@GALKKKEOI", text: "Merhaba, aracı inceledim son fiyat ne olur?", time: "12:30" }
                 ]
             }
         ];
@@ -471,6 +535,7 @@
             localStorage.setItem("pazar_users", JSON.stringify(users));
             localStorage.setItem("pazar_favorites", JSON.stringify(favorites));
             localStorage.setItem("pazar_chats", JSON.stringify(chats));
+            localStorage.setItem("pazar_settings", JSON.stringify(systemSettings));
         }
 
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
@@ -515,7 +580,7 @@
             } else if (viewName === 'admin') {
                 document.getElementById('viewAdmin').classList.add('active');
                 document.getElementById('navAdmin').classList.add('active');
-                renderAdminListings();
+                renderAdminPanelData();
             }
         }
 
@@ -534,7 +599,7 @@
             const newUser = {
                 name, email, phone, iban,
                 regDate: new Date().toLocaleDateString('tr-TR'),
-                isPremium: false, premiumStatus: "Normal"
+                isPremium: false, premiumStatus: "Normal", isBanned: false
             };
             users.push(newUser);
             currentUser = newUser;
@@ -555,6 +620,11 @@
                 return;
             }
 
+            if (existingUser.isBanned) {
+                alert("Bu hesap sistem yöneticisi tarafından banlanmıştır / engellenmiştir.");
+                return;
+            }
+
             currentUser = existingUser;
             closeModal('auth-modal');
             updateHeaderUserUI();
@@ -571,7 +641,15 @@
 
         function updateHeaderUserUI() {
             const actionsDiv = document.getElementById("headerActions");
+            const adminNav = document.getElementById("navAdmin");
+
             if (currentUser) {
+                if (currentUser.email === "admin@pazarsepeti.com") {
+                    adminNav.style.display = "inline-block";
+                } else {
+                    adminNav.style.display = "none";
+                }
+
                 actionsDiv.innerHTML = `
                     <div class="profile-menu-container">
                         <div class="profile-trigger" onclick="toggleProfileDropdown(event)">
@@ -586,6 +664,7 @@
                     <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
                 `;
             } else {
+                adminNav.style.display = "none";
                 actionsDiv.innerHTML = `
                     <button class="btn btn-outline" onclick="openModal('auth-modal')">Giriş / Kayıt Ol</button>
                     <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
@@ -675,6 +754,7 @@
         function checkPremiumStatus(checkbox) {
             if (!currentUser.isPremium && checkbox.checked) {
                 checkbox.checked = false;
+                document.getElementById("adminIbanDisplayBox").innerText = systemSettings.adminIban;
                 openModal('payment-modal');
             }
         }
@@ -1017,7 +1097,7 @@
                 saveData();
                 renderListings(); 
                 renderMyListings();
-                renderAdminListings();
+                renderAdminPanelData();
                 alert("İlan kaldırıldı.");
             }
         }
@@ -1039,7 +1119,7 @@
             closeModal('sold-receipt-modal');
             renderListings(); 
             renderMyListings();
-            renderAdminListings();
+            renderAdminPanelData();
             alert("Tebrikler! İlan 'Satıldı' olarak işaretlendi ve sistemden başarıyla kaldırıldı.");
         }
 
@@ -1048,8 +1128,103 @@
                 listings = listings.filter(l => l.id !== id);
                 saveData();
                 renderListings();
-                renderAdminListings();
+                renderAdminPanelData();
                 alert("İlan yönetici tarafından kaldırıldı.");
+            }
+        }
+
+        function saveAdminIban() {
+            const newIban = document.getElementById("adminIbanInput").value.trim();
+            if (!newIban) {
+                alert("Lütfen geçerli bir IBAN girin!");
+                return;
+            }
+            systemSettings.adminIban = newIban;
+            saveData();
+            alert("Admin IBAN numarası güncellendi.");
+        }
+
+        function toggleUserBan(email) {
+            const targetUser = users.find(u => u.email === email);
+            if (!targetUser) return;
+            if (targetUser.email === "admin@pazarsepeti.com") {
+                alert("Ana yönetici hesabı banlanamaz!");
+                return;
+            }
+            targetUser.isBanned = !targetUser.isBanned;
+            saveData();
+            renderAdminPanelData();
+            alert(`Kullanıcı durumu: ${targetUser.isBanned ? 'Banlandı / Engellendi' : 'Aktif'}`);
+        }
+
+        function adminDeleteChat(chatId) {
+            if (confirm("Bu sohbeti tamamen silmek istediğinize emin misiniz?")) {
+                chats = chats.filter(c => c.id !== chatId);
+                saveData();
+                renderAdminPanelData();
+                alert("Sohbet silindi.");
+            }
+        }
+
+        function renderAdminPanelData() {
+            document.getElementById("adminIbanInput").value = systemSettings.adminIban;
+
+            // Kullanıcılar Tablosu
+            const userTableBody = document.getElementById("adminUsersTableBody");
+            userTableBody.innerHTML = "";
+            users.forEach(u => {
+                userTableBody.innerHTML += `
+                    <tr>
+                        <td><strong>${u.name}</strong></td>
+                        <td>${u.email}</td>
+                        <td>${u.phone || '-'}</td>
+                        <td>${u.iban || '-'}</td>
+                        <td><span style="color:${u.isBanned ? '#ef4444' : '#10b981'}; font-weight:bold;">${u.isBanned ? 'Banlı' : u.premiumStatus}</span></td>
+                        <td>
+                            ${u.email !== 'admin@pazarsepeti.com' ? `<button class="btn-danger" onclick="toggleUserBan('${u.email}')">${u.isBanned ? 'Engeli Kaldır' : 'Banla'}</button>` : 'Sistem'}
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Aktif İlanlar Tablosu
+            const listingTableBody = document.getElementById("adminListingsTableBody");
+            listingTableBody.innerHTML = "";
+            if (listings.length === 0) {
+                listingTableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Aktif ilan bulunmuyor.</td></tr>`;
+            } else {
+                listings.forEach(item => {
+                    listingTableBody.innerHTML += `
+                        <tr>
+                            <td><strong>${item.title}</strong></td>
+                            <td>${item.category}</td>
+                            <td>${item.price}</td>
+                            <td>${item.user} (${item.email})</td>
+                            <td><button class="btn-danger" onclick="adminRemoveListing(${item.id})">Kaldır</button></td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Tüm Sohbetler Denetim Alanı
+            const allChatsContainer = document.getElementById("adminAllChatsContainer");
+            allChatsContainer.innerHTML = "";
+            if (chats.length === 0) {
+                allChatsContainer.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem;">Sistemde kayıtlı sohbet bulunmuyor.</p>`;
+            } else {
+                chats.forEach(chat => {
+                    let msgs = chat.messages.map(m => `<div style="font-size:0.8rem; margin-bottom:2px;"><strong>${m.sender}:</strong> ${m.text} <span style="color:#888; font-size:0.7rem;">(${m.time})</span></div>`).join('');
+                    allChatsContainer.innerHTML += `
+                        <div style="background:#f8fafc; border:1px solid var(--border); padding:1rem; border-radius:8px; display:flex; justify-content:space-between; align-items:flex-start;">
+                            <div>
+                                <div style="font-weight:bold; font-size:0.9rem; color:var(--primary); margin-bottom:0.3rem;">📋 İlan: ${chat.listingTitle}</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.5rem;">Satıcı: ${chat.ownerEmail} | Alıcı: ${chat.senderEmail}</div>
+                                <div style="background:white; padding:0.5rem; border:1px solid var(--border); border-radius:6px; max-width:500px;">${msgs}</div>
+                            </div>
+                            <button class="btn-danger" onclick="adminDeleteChat(${chat.id})">Sohbeti Sil</button>
+                        </div>
+                    `;
+                });
             }
         }
 
@@ -1070,23 +1245,19 @@
             container.scrollTop = container.scrollHeight;
 
             setTimeout(() => {
-                let reply = "Bu konuda size yardımcı olabilirim. Lütfen detaylı bilgi için üst menüdeki sekmeleri kullanın veya sorunuzu farklı bir şekilde sorun.";
+                let reply = "Bu konuda size yardımcı olabilirim. Lütfen detaylı bilgi için üst menüdeki sekmeleri kullanın.";
                 const lower = text.toLowerCase();
 
                 if (lower.includes("ilan") && (lower.includes("nasıl") || lower.includes("ver") || lower.includes("ekle"))) {
-                    reply = "Üst menüde yer alan sağ üst köşedeki **'+ İlan Ver'** butonuna tıklayarak kategori seçip (Vasıta, Elektronik, Ev Eşyası, Emlak), fotoğraf ekleyip kolayca ilan yayınlayabilirsiniz.";
+                    reply = "Üst menüde yer alan sağ üst köşedeki **'+ İlan Ver'** butonuna tıklayarak ilan yayınlayabilirsiniz.";
                 } else if (lower.includes("iban") || lower.includes("para") || lower.includes("ödeme") || lower.includes("havale")) {
-                    reply = "Alım-satım işlemlerinde ödemeler doğrudan ilan sahibinin belirttiği kişisel IBAN numarasına yapılır. Alıcı, ilandaki IBAN'a ödemeyi gönderdikten sonra satıcı ile sohbet üzerinden dekont paylaşabilir.";
-                } else if (lower.includes("premium") || lower.includes("ücret") || lower.includes("yıllık")) {
-                    reply = "Premium ilan ve üyelik yıllık 50 TL'dir. İlan verme ekranındayken **'👑 Premium İlan Yap'** kutucuğunu işaretleyebilir, açılan havale ekranına ücreti gönderip dekont yükleyerek hesabınızı veya ilanınızı Premium statüsüne yükseltebilirsiniz.";
-                } else if (lower.includes("satıldı") || lower.includes("kaldır") || lower.includes("sil")) {
-                    reply = "Kendi eklediğiniz ilanları kaldırmak için 'İlanlarım' sekmesinden ilanınızın üzerindeki **'İlanı Kaldır'** butonuna tıklayabilirsiniz. Ürününüz satıldıysa 'Satıldığı İçin İlandan Kaldırıyorum' seçeneğini seçip transfer/satış dekontunu yükleyerek ilanı başarıyla kapatabilirsiniz.";
-                } else if (lower.includes("ekspertiz") || lower.includes("araç") || lower.includes("parça") || lower.includes("boyalı") || lower.includes("değişen")) {
-                    reply = "Vasıta kategorisinde ilan verirken 3D araç şeması üzerinden parçalara tıklayarak parça durumlarını 'Orijinal', 'Boyalı' veya 'Değişen' olarak detaylı şekilde işaretleyebilir, alıcılara ekspertiz raporu sunabilirsiniz.";
-                } else if (lower.includes("şifre") || lower.includes("giriş") || lower.includes("kayıt")) {
-                    reply = "PazarSepeti platformuna giriş yapmak veya kayıt olmak için üst menüdeki **'Giriş / Kayıt Ol'** butonunu kullanabilirsiniz. Kayıt olurken ad-soyad, e-posta, telefon ve IBAN bilgileriniz alınır.";
-                } else if (lower.includes("merhaba") || lower.includes("selam") || lower.includes("hey")) {
-                    reply = "Merhaba! PazarSepeti canlı destek hattına hoş geldiniz. İlan verme, IBAN ödemeleri, premium üyelik veya site kullanımı hakkında merak ettiklerinizi bana sorabilirsiniz!";
+                    reply = "Yönetici olarak üst menüden **ADMIN** paneline girerek Premium ödemeleri için kendi IBAN numaranızı güncelleyebilirsiniz.";
+                } else if (lower.includes("ban") || lower.includes("engelle") || lower.includes("kullanıcı")) {
+                    reply = "**ADMIN** panelinden kayıtlı kullanıcıları görüntüleyebilir, şüpheli kullanıcıları banlayabilir veya engellerini kaldırabilirsiniz.";
+                } else if (lower.includes("chat") || lower.includes("sohbet") || lower.includes("mesaj")) {
+                    reply = "Yine **ADMIN** panelinin alt kısmından sitedeki tüm alıcı ve satıcı ilan sohbetlerini denetleyebilir ve silebilirsiniz.";
+                } else if (lower.includes("merhaba") || lower.includes("selam")) {
+                    reply = "Merhaba! PazarSepeti admin asistanına hoş geldiniz.";
                 }
 
                 container.innerHTML += `<div class="bot-bubble incoming">${reply}</div>`;
@@ -1182,35 +1353,13 @@
             });
         }
 
-        function renderAdminListings() {
-            const grid = document.getElementById("adminListingsGrid");
-            grid.innerHTML = "";
-            if (listings.length === 0) {
-                grid.innerHTML = `<p style="color:var(--text-muted);">Sistemde ilan bulunmuyor.</p>`;
-                return;
-            }
-
-            listings.forEach(item => {
-                const card = document.createElement("div");
-                card.className = `listing-card`;
-                card.onclick = () => openDetailModal(item.id);
-
-                card.innerHTML = `
-                    <button class="btn-danger" onclick="adminRemoveListing(${item.id}); event.stopPropagation();" style="position:absolute; top:10px; right:10px; z-index:10;">Yönetici ile Kaldır</button>
-                    <img src="${item.images[0]}" alt="${item.title}">
-                    <div class="listing-body">
-                        <div class="listing-title">${item.title}</div>
-                        <div style="font-size:0.75rem; color:var(--text-muted);">Sahibi: ${item.user} (${item.email})</div>
-                        <div class="listing-price">${item.price}</div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
         function handleSearch(value) {
             searchQuery = value;
             if (value.trim().toLowerCase() === "admin") {
+                if (!currentUser || currentUser.email !== "admin@pazarsepeti.com") {
+                    alert("Admin paneline erişmek için admin hesabıyla giriş yapmalısınız!");
+                    return;
+                }
                 switchView('admin');
                 return;
             }
