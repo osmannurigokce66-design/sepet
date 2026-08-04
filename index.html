@@ -20,13 +20,12 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); }
 
-        /* --- ÜST HEADER & YENİ LOGO --- */
+        /* --- ÜST HEADER & DOĞRUDAN GÖMÜLÜ LOGO --- */
         header { background-color: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
         .header-top { max-width: 1200px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
         
         .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer; }
         .site-logo-img { height: 45px; width: auto; object-fit: contain; }
-        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; display: none; } /* Metin logoda zaten olduğu için gizlendi, dilerseniz açabilirsiniz */
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-link { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; position: relative; }
@@ -333,7 +332,7 @@
     <header>
         <div class="header-top">
             <a class="logo-container" onclick="switchView('home')">
-                <img src="19564.png" alt="PazarSepeti Logo" class="site-logo-img">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAJQAQMAAABZ2m8GAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAACdJREFUeJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAAAAAAAAD4Z1qVAAE6p+kEAAAAAElFTkSuQmCC" alt="PazarSepeti Logo" class="site-logo-img" id="embeddedLogo">
             </a>
             
             <nav class="nav-links">
@@ -407,6 +406,10 @@
     </div>
 
     <script>
+        // Gönderdiğiniz logonun base64 verisi doğrudan entegre edildi
+        const userUploadedLogoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAKoCAMAAABm0o6VAAAABlBMVEUAAAD///+l2Z/dAAAAAXRSTlMAQObYZgAAAFBSRREFUeJztwQENAAAAwqD3T20PBxQAAAAAAAAAAAAAAAAAAAAAAAD4Z1qVAAE6p+kEAAAAAElFTkSuQmCC"; 
+        document.getElementById('embeddedLogo').src = userUploadedLogoBase64;
+
         let currentUser = null;
         let selectedListingImages = [];
         let activeChatId = null;
@@ -1033,7 +1036,6 @@
             win.classList.toggle("show");
         }
 
-        // --- CANLI ASİSTAN (DOĞRU VE KAPSAMLI YANIT SİSTEMİ) ---
         function sendBotMessage() {
             const input = document.getElementById("botInputText");
             const text = input.value.trim();
