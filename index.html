@@ -57,10 +57,27 @@
 
         .logo span { color: var(--accent); }
 
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active { color: var(--primary); }
+
         .header-search {
             flex: 1;
-            max-width: 500px;
-            margin: 0 2rem;
+            max-width: 350px;
+            margin: 0 1rem;
             display: flex;
             background: #f0f2f5;
             border-radius: 8px;
@@ -71,15 +88,15 @@
         .header-search input {
             flex: 1;
             border: none;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 1rem;
             background: transparent;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             outline: none;
         }
 
         .header-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.8rem;
             align-items: center;
         }
 
@@ -102,7 +119,7 @@
         .btn-outline { background-color: transparent; border: 1px solid var(--primary); color: var(--primary); }
         .btn-outline:hover { background-color: #eff6ff; }
         .btn-success { background-color: #10b981; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: 600; }
-        .btn-success:hover { background-color: #059669; }
+        .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
 
         /* --- MODALLER --- */
         .modal {
@@ -120,7 +137,7 @@
             padding: 2.5rem;
             border-radius: 12px;
             width: 100%;
-            max-width: 480px;
+            max-width: 520px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             position: relative;
             max-height: 90vh;
@@ -130,88 +147,59 @@
         .modal-box h2 { margin-bottom: 1.5rem; color: var(--primary); text-align: center; }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; outline: none;
         }
 
-        /* --- GERÇEKÇİ ARAÇ ŞEMASI (GÖVDE DÜZENİ) --- */
-        .car-expert-container {
-            background: #1e293b;
-            border: 2px solid var(--border);
-            padding: 1.5rem;
-            border-radius: 10px;
+        /* --- GALERİ --- */
+        .gallery-upload-box {
+            border: 2px dashed var(--primary);
+            background: #f0f4ff;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        .gallery-preview-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 0.5rem; }
+        .gallery-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+
+        /* --- 3D ARABA ŞEMASI (FORM & DETAY) --- */
+        .car-expert-wrapper {
+            background: #0f172a;
+            border: 2px solid #334155;
+            padding: 1.2rem;
+            border-radius: 12px;
             margin: 1rem 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
-
-        .car-row {
-            display: flex;
-            gap: 8px;
-            width: 100%;
-            justify-content: center;
-        }
-
+        .car-section-title { color: #94a3b8; font-size: 0.75rem; text-transform: uppercase; font-weight: bold; }
+        .car-row { display: flex; gap: 8px; width: 100%; justify-content: center; }
         .car-part-btn {
-            background: #ffffff;
-            border: 2px solid var(--border);
-            padding: 0.6rem 0.4rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-align: center;
-            flex: 1;
-            transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #ffffff; border: 2px solid var(--border); padding: 0.6rem 0.3rem; border-radius: 6px;
+            cursor: pointer; font-size: 0.72rem; font-weight: 700; text-align: center; flex: 1;
         }
 
-        .car-part-btn:hover { transform: scale(1.02); }
-
-        /* Ekspertiz Renk Kodları */
         .selected-orijinal { background-color: #d1fae5 !important; border-color: #10b981 !important; color: #065f46 !important; }
         .selected-boyali { background-color: #fef3c7 !important; border-color: #f59e0b !important; color: #92400e !important; }
         .selected-degisen { background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #991b1b !important; }
 
-        /* --- ANA İÇERİK --- */
-        .main-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-        }
-
-        .listings-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
+        /* --- ANA İÇERİK & KARTLAR --- */
+        .main-container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
+        
         .listing-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            position: relative;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+            position: relative; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
         }
-
-        .listing-card.premium {
-            border: 2px solid var(--premium-gold);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
-        }
-
-        .premium-badge {
-            position: absolute;
-            top: 10px; right: 10px;
-            background: var(--premium-gold);
-            color: white;
-            padding: 0.2rem 0.6rem;
-            font-size: 0.75rem;
-            font-weight: bold;
-            border-radius: 4px;
-            z-index: 10;
-        }
+        .listing-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .listing-card.premium { border: 2px solid var(--premium-gold); box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2); }
+        
+        .premium-badge { position: absolute; top: 10px; right: 10px; background: var(--premium-gold); color: white; padding: 0.2rem 0.6rem; font-size: 0.75rem; font-weight: bold; border-radius: 4px; z-index: 10; }
+        .fav-btn { position: absolute; top: 10px; left: 10px; background: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 1rem; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         .listing-card img { width: 100%; height: 160px; object-fit: cover; }
         .listing-body { padding: 1rem; }
@@ -219,20 +207,19 @@
         .listing-price { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 0.4rem; }
         .listing-footer { font-size: 0.8rem; color: var(--text-muted); display: flex; justify-content: space-between; margin-top: 0.8rem; }
 
+        /* --- İLAN DETAY MODALI --- */
+        .detail-modal-box { max-width: 750px; background: white; border-radius: 12px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
+        .detail-gallery { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 1rem; padding-bottom: 5px; }
+        .detail-gallery img { width: 120px; height: 90px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); }
+        .seller-card { background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 8px; margin-top: 1rem; }
+        
         /* --- YÖNETİM PANELİ --- */
-        #admin-panel {
-            display: none;
-            background: #111827;
-            color: white;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 1200px;
-            border-radius: 12px;
-        }
-
+        #admin-panel { display: none; background: #111827; color: white; padding: 2rem; margin: 2rem auto; max-width: 1200px; border-radius: 12px; }
         .admin-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
         .admin-table th, .admin-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #374151; font-size: 0.9rem; }
-        .btn-danger { background-color: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; }
+        
+        .section-view { display: none; }
+        .section-view.active { display: block; }
     </style>
 </head>
 <body>
@@ -243,22 +230,10 @@
             <button onclick="closeModal('auth-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
             <h2>PazarSepeti Giriş</h2>
             <form onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <label>Ad Soyad</label>
-                    <input type="text" id="loginName" required placeholder="Adınız Soyadınız">
-                </div>
-                <div class="form-group">
-                    <label>E-posta Adresi</label>
-                    <input type="email" id="loginEmail" required placeholder="ornek@mail.com">
-                </div>
-                <div class="form-group">
-                    <label>Telefon Numarası</label>
-                    <input type="tel" id="loginPhone" required placeholder="05XX XXX XX XX">
-                </div>
-                <div class="form-group">
-                    <label>IBAN Numarası</label>
-                    <input type="text" id="loginIban" required placeholder="TR00 0000 0000 0000 0000 0000 00">
-                </div>
+                <div class="form-group"><label>Ad Soyad</label><input type="text" id="loginName" required placeholder="Adınız Soyadınız"></div>
+                <div class="form-group"><label>E-posta Adresi</label><input type="email" id="loginEmail" required placeholder="ornek@mail.com"></div>
+                <div class="form-group"><label>Telefon Numarası</label><input type="tel" id="loginPhone" required placeholder="05XX XXX XX XX"></div>
+                <div class="form-group"><label>IBAN Numarası</label><input type="text" id="loginIban" required placeholder="TR00 0000 0000 0000 0000 0000 00"></div>
                 <button type="submit" class="btn" style="width: 100%; margin-top: 1rem; padding: 0.75rem;">Giriş Yap</button>
             </form>
         </div>
@@ -285,36 +260,29 @@
                 </div>
 
                 <div class="form-group">
-                    <label>İlan Başlığı</label>
-                    <input type="text" id="newTitle" required placeholder="Örn: Hatasız Temiz Aile Aracı">
-                </div>
-
-                <div class="form-group">
-                    <label>Fiyat (TL)</label>
-                    <input type="text" id="newPrice" required placeholder="Örn: 450.000 TL">
-                </div>
-
-                <div class="form-group">
-                    <label>Konum (Şehir / İlçe)</label>
-                    <input type="text" id="newLocation" required placeholder="Örn: İstanbul / Kadıköy">
-                </div>
-
-                <!-- GERÇEKÇİ ARABA GÖVDE HATTI EKSPERTİZİ -->
-                <div id="vasitaFields" style="display: none;">
-                    <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">🚗 Araç Gövde Hatları Ekspertiz Şeması</label>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">Parçalara tıklayarak durumu değiştirebilirsiniz (Orijinal / Boyalı / Değişen):</p>
-                    
-                    <div class="car-expert-container" id="carPartsGrid">
-                        <!-- Otomobil şeması dinamik olarak JS ile buraya çizilir -->
+                    <label>İlan Fotoğrafları (Galeriden Seç)</label>
+                    <div class="gallery-upload-box" onclick="document.getElementById('hiddenFileinput').click()">
+                        <span style="font-size: 1.5rem;">📁</span>
+                        <div style="font-weight: 600; color: var(--primary); margin-top: 0.3rem;">Galeriden Fotoğraf Seç</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Birden fazla fotoğraf seçebilirsiniz</div>
                     </div>
+                    <input type="file" id="hiddenFileinput" accept="image/*" multiple style="display: none;" onchange="handleGallerySelection(event)">
+                    <div class="gallery-preview-grid" id="galleryPreviewContainer"></div>
                 </div>
 
-                <div class="form-group">
-                    <label>Ürün Durumu / Açıklama</label>
-                    <input type="text" id="newCondition" placeholder="Örn: İkinci El, Temiz, Garantili vb.">
+                <div class="form-group"><label>İlan Başlığı</label><input type="text" id="newTitle" required placeholder="Örn: Hatasız Temiz Aile Aracı"></div>
+                <div class="form-group"><label>Fiyat (TL)</label><input type="text" id="newPrice" required placeholder="Örn: 450.000 TL"></div>
+                <div class="form-group"><label>Konum (Şehir / İlçe)</label><input type="text" id="newLocation" required placeholder="Örn: İstanbul / Kadıköy"></div>
+
+                <!-- VASITA İÇİN 3D EKSPERTİZ -->
+                <div id="vasitaFields" style="display: none;">
+                    <label style="font-weight: 600; font-size: 0.9rem; color: var(--primary);">🚗 Araç Şeması (Ön - Orta - Arka Bölüm)</label>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.4rem;">Parçalara tıklayarak durumu değiştirebilirsiniz (Orijinal / Boyalı / Değişen):</p>
+                    <div class="car-expert-wrapper" id="carPartsContainer"></div>
                 </div>
 
-                <!-- PREMİUM ALAN BİLGİLENDİRMESİ -->
+                <div class="form-group"><label>Ürün Durumu / Açıklama</label><input type="text" id="newCondition" placeholder="Örn: İkinci El, Temiz, Garantili vb."></div>
+
                 <div style="background: #fffbeb; border: 1px solid #fef3c7; padding: 1rem; border-radius: 8px; margin: 1.5rem 0;">
                     <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: bold; color: #b45309;">
                         <input type="checkbox" id="isPremium" onchange="checkPremiumStatus(this)" style="width: 18px; height: 18px;">
@@ -328,30 +296,39 @@
         </div>
     </div>
 
-    <!-- 3. PARA GÖNDERME / IBAN TALİMAT MODALI -->
+    <!-- 3. ÖDEME / PREMİUM MODALI -->
     <div id="payment-modal" class="modal">
-        <div class="modal-box text-center">
+        <div class="modal-box text-center" style="text-align: center;">
             <h2>👑 Premium Üyelik Talebi</h2>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
-                Yıllık Premium üyelik ücreti <strong>50 TL</strong>'dir. Premium özelliklerden yararlanabilmek için aşağıdaki Admin IBAN adresine havale/EFT yapmalısınız.
-            </p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Yıllık Premium üyelik ücreti <strong>50 TL</strong>'dir. Admin IBAN adresine havale yapmalısınız.</p>
             <div style="background: #f8fafc; border: 1px solid var(--border); padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 1rem; font-weight: bold; margin-bottom: 1rem; color: var(--primary);">
-                TR12 0001 0005 5555 4444 3333 01<br>
-                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Alıcı: PazarSepeti Platform (Admin)</span>
+                TR12 0001 0005 5555 4444 3333 01<br><span style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">Alıcı: PazarSepeti Platform (Admin)</span>
             </div>
-            <p style="font-size: 0.85rem; color: var(--accent); margin-bottom: 1.5rem;">
-                ⚠️ Para gönderildikten sonra Admin talebinizi inceleyip onaylayacaktır. Onaylandığında hesabınız otomatik olarak Premium olacaktır.
-            </p>
             <button class="btn" onclick="submitPremiumRequest()" style="width: 100%;">Ödemeyi Yaptım, Onaya Gönder</button>
-            <button onclick="closeModal('payment-modal')" style="background:none; border:none; margin-top:1rem; color:var(--text-muted); cursor:pointer; font-size:0.85rem;">Vazgeç</button>
+            <button onclick="closeModal('payment-modal')" style="background:none; border:none; margin-top:1rem; color:var(--text-muted); cursor:pointer;">Vazgeç</button>
+        </div>
+    </div>
+
+    <!-- 4. İLAN DETAY MODALI -->
+    <div id="detail-modal" class="modal">
+        <div class="detail-modal-box">
+            <button onclick="closeModal('detail-modal')" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:1.3rem; cursor:pointer;">✕</button>
+            <div id="detailContent"></div>
         </div>
     </div>
 
     <!-- ÜST HEADER -->
     <header>
         <div class="header-top">
-            <a href="#" class="logo">Pazar<span>Sepeti</span></a>
+            <a href="#" class="logo" onclick="switchView('home')">Pazar<span>Sepeti</span></a>
             
+            <nav class="nav-links">
+                <a class="nav-link active" onclick="switchView('home')" id="navHome">Ana Sayfa</a>
+                <a class="nav-link" onclick="switchView('myListings')" id="navMyListings">İlanlarım</a>
+                <a class="nav-link" onclick="switchView('favorites')" id="navFavorites">Favorilerim</a>
+                <a class="nav-link" onclick="switchView('contact')" id="navContact">İletişim</a>
+            </nav>
+
             <div class="header-search">
                 <input type="text" id="searchInput" placeholder="İlan ara..." oninput="handleSearch(this.value)">
             </div>
@@ -363,78 +340,109 @@
         </div>
     </header>
 
-    <!-- GİZLİ YÖNETİM PANELİ -->
+    <!-- YÖNETİM PANELİ -->
     <div id="admin-panel">
         <h2>🛠️ PazarSepeti Yönetim Paneli (Admin Modu)</h2>
-        <p style="font-size: 0.85rem; color: #9ca3af; margin-bottom: 1rem;">Kullanıcıların 50 TL yıllık Premium ödeme taleplerini buradan onaylayabilirsiniz.</p>
-        
         <h3 style="margin-top: 1rem; font-size: 1rem; color: #f8fafc;">Kayıtlı Kullanıcılar ve Premium Onayları</h3>
         <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Ad Soyad</th>
-                    <th>E-posta</th>
-                    <th>Telefon</th>
-                    <th>IBAN</th>
-                    <th>Premium Durumu</th>
-                    <th>İşlem</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Ad Soyad</th><th>E-posta</th><th>Telefon</th><th>IBAN</th><th>Durum</th><th>İşlem</th></tr></thead>
             <tbody id="adminUsersTableBody"></tbody>
         </table>
-
         <h3 style="margin-top: 2rem; font-size: 1rem; color: #f8fafc;">Aktif İlanlar</h3>
         <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>İlan Başlığı</th>
-                    <th>Kategori</th>
-                    <th>Fiyat</th>
-                    <th>Ekleyen</th>
-                    <th>Tür</th>
-                    <th>İşlem</th>
-                </tr>
-            </thead>
+            <thead><tr><th>İlan Başlığı</th><th>Kategori</th><th>Fiyat</th><th>Ekleyen</th><th>İşlem</th></tr></thead>
             <tbody id="adminListingsTableBody"></tbody>
         </table>
     </div>
 
-    <!-- ANA İÇERİK -->
+    <!-- İÇERİK GÖRÜNÜMLERİ -->
     <div class="main-container">
-        <h2 style="margin-bottom: 1.5rem;">Güncel İlanlar</h2>
-        <div class="listings-grid" id="listingsGrid"></div>
+        
+        <!-- ANA SAYFA GÖRÜNÜMÜ -->
+        <div id="viewHome" class="section-view active">
+            <h2 style="margin-bottom: 1.5rem;">Güncel İlanlar</h2>
+            <div class="listings-grid" id="listingsGrid"></div>
+        </div>
+
+        <!-- İLANLARIM GÖRÜNÜMÜ -->
+        <div id="viewMyListings" class="section-view">
+            <h2 style="margin-bottom: 1.5rem;">Benim Eklediğim İlanlar</h2>
+            <div class="listings-grid" id="myListingsGrid"></div>
+        </div>
+
+        <!-- FAVORİLERİM GÖRÜNÜMÜ -->
+        <div id="viewFavorites" class="section-view">
+            <h2 style="margin-bottom: 1.5rem;">Favori İlanlarım</h2>
+            <div class="listings-grid" id="favoritesGrid"></div>
+        </div>
+
+        <!-- İLETİŞİM GÖRÜNÜMÜ -->
+        <div id="viewContact" class="section-view">
+            <div style="background:white; padding:2rem; border-radius:12px; max-width:600px; margin:0 auto; border:1px solid var(--border);">
+                <h2 style="color:var(--primary); margin-bottom:1rem;">İletişim ve Destek</h2>
+                <p style="color:var(--text-muted); margin-bottom:1.5rem;">Sorularınız, ilan onayları veya teknik destek için bize aşağıdaki kanallardan ulaşabilirsiniz.</p>
+                <div style="display:flex; flex-direction:column; gap:0.8rem; font-size:0.95rem;">
+                    <div><strong>📧 E-posta:</strong> destek@pazarsepeti.com</div>
+                    <div><strong>📞 Telefon:</strong> 0850 300 00 00</div>
+                    <div><strong>🏢 Adres:</strong> Teknoloji Vadisi No: 42, İstanbul / Türkiye</div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
         let currentUser = null;
+        let selectedListingImages = [];
+        let favorites = [];
         
         let users = [
             { name: "Admin (Sistem)", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005", isPremium: true, premiumStatus: "Onaylı" }
         ];
 
-        // Gerçek araba hatlarına benzetilmiş parça dizilimi
         let carPartsStatus = {
-            "Sol Ön Çamurluk": "Orijinal",
-            "Ön Kaput": "Orijinal",
-            "Sağ Ön Çamurluk": "Orijinal",
-            "Sol Ön Kapı": "Orijinal",
-            "Tavan": "Orijinal",
-            "Sağ Ön Kapı": "Orijinal",
-            "Sol Arka Kapı": "Orijinal",
-            "Bagaj Kapağı": "Orijinal",
-            "Sağ Arka Kapı": "Orijinal",
-            "Sol Arka Çamurluk": "Orijinal",
-            "Sağ Arka Çamurluk": "Orijinal"
+            "Sol Ön Çamurluk": "Orijinal", "Ön Kaput": "Orijinal", "Sağ Ön Çamurluk": "Orijinal",
+            "Sol Ön Kapı": "Orijinal", "Tavan": "Orijinal", "Sağ Ön Kapı": "Orijinal",
+            "Sol Arka Kapı": "Orijinal", "Bagaj Kapağı": "Orijinal", "Sağ Arka Kapı": "Orijinal",
+            "Sol Arka Çamurluk": "Orijinal", "Sağ Arka Çamurluk": "Orijinal"
         };
 
         let listings = [
-            { id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, user: "Admin (Sistem)", email: "admin@pazarsepeti.com", parts: carPartsStatus, image: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400" }
+            { 
+                id: 1, title: "2020 Model Hatasız Aile Sedanı", category: "Vasıta", price: "780.000 TL", 
+                location: "Ankara / Çankaya", condition: "Orijinal Parçalar", isPremium: true, 
+                user: "Admin (Sistem)", email: "admin@pazarsepeti.com", phone: "05000000000", iban: "TR33 0006 1005",
+                parts: {...carPartsStatus}, images: ["https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400"] 
+            }
         ];
 
         let searchQuery = "";
 
         function openModal(id) { document.getElementById(id).style.display = "flex"; }
         function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+        function switchView(viewName) {
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+
+            if (viewName === 'home') {
+                document.getElementById('viewHome').classList.add('active');
+                document.getElementById('navHome').classList.add('active');
+                renderListings();
+            } else if (viewName === 'myListings') {
+                if (!currentUser) { alert("İlanlarınızı görebilmek için giriş yapmalısınız!"); openModal('auth-modal'); return; }
+                document.getElementById('viewMyListings').classList.add('active');
+                document.getElementById('navMyListings').classList.add('active');
+                renderMyListings();
+            } else if (viewName === 'favorites') {
+                document.getElementById('viewFavorites').classList.add('active');
+                document.getElementById('navFavorites').classList.add('active');
+                renderFavorites();
+            } else if (viewName === 'contact') {
+                document.getElementById('viewContact').classList.add('active');
+                document.getElementById('navContact').classList.add('active');
+            }
+        }
 
         function handleLogin(event) {
             event.preventDefault();
@@ -466,6 +474,7 @@
                 <button class="btn btn-outline" onclick="openModal('auth-modal')">Giriş Yap</button>
                 <button class="btn btn-accent" onclick="openListingModal()">+ İlan Ver</button>
             `;
+            switchView('home');
             alert("Çıkış yapıldı.");
         }
 
@@ -475,90 +484,91 @@
                 openModal('auth-modal');
                 return;
             }
-            
+            selectedListingImages = [];
+            document.getElementById("galleryPreviewContainer").innerHTML = "";
+            document.getElementById("hiddenFileinput").value = "";
+
             const checkbox = document.getElementById("isPremium");
             const statusText = document.getElementById("premiumStatusText");
             
             if (currentUser.isPremium) {
-                checkbox.checked = true;
-                checkbox.disabled = false;
-                statusText.innerText = "👑 Premium hesabınız aktif (Yıllık 50 TL ödemeniz onaylanmış).";
-            } else if (currentUser.premiumStatus === "Beklemede") {
-                checkbox.checked = false;
-                checkbox.disabled = true;
-                statusText.innerText = "⏳ 50 TL ödeme onayı bekleniyor. Admin onayladığında aktifleşecek.";
+                checkbox.checked = true; checkbox.disabled = false;
+                statusText.innerText = "👑 Premium hesabınız aktif.";
             } else {
-                checkbox.checked = false;
-                checkbox.disabled = false;
-                statusText.innerText = "Standart ilan (İsterseniz seçerek 50 TL yıllık ücretle Premium yapabilirsiniz).";
+                checkbox.checked = false; checkbox.disabled = false;
+                statusText.innerText = "Standart ilan (50 TL yıllık ücretle Premium yapabilirsiniz).";
             }
-
             openModal('listing-modal');
-            renderCarParts();
+            renderCarPartsForm();
+        }
+
+        function handleGallerySelection(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            const previewContainer = document.getElementById("galleryPreviewContainer");
+            previewContainer.innerHTML = "";
+            selectedListingImages = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedListingImages.push(e.target.result);
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.className = "gallery-thumb";
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(files[i]);
+            }
         }
 
         function checkPremiumStatus(checkbox) {
-            if (!currentUser.isPremium && currentUser.premiumStatus !== "Beklemede" && checkbox.checked) {
+            if (!currentUser.isPremium && checkbox.checked) {
                 checkbox.checked = false;
                 openModal('payment-modal');
-            } else if (currentUser.premiumStatus === "Beklemede") {
-                checkbox.checked = false;
-                alert("Ödeme onayınız beklenmektedir!");
             }
         }
 
         function submitPremiumRequest() {
             currentUser.premiumStatus = "Beklemede";
             closeModal('payment-modal');
-            alert("Premium talebiniz ve ödeme bildirimi admin paneline iletildi. Onay bekleniyor.");
+            alert("Premium talebiniz admin paneline iletildi.");
         }
 
         function toggleCategoryFields(category) {
             document.getElementById("vasitaFields").style.display = category === "Vasıta" ? "block" : "none";
         }
 
-        // Otomobil hatlarına uygun satır bazlı şema yerleşimi
-        function renderCarParts() {
-            const container = document.getElementById("carPartsGrid");
+        function renderCarPartsForm() {
+            const container = document.getElementById("carPartsContainer");
             container.innerHTML = "";
             const statuses = ["Orijinal", "Boyalı", "Değişen"];
-
-            // Şema Satırları (Arabanın Önünden Arkasına Doğru)
-            const rows = [
-                ["Sol Ön Çamurluk", "Ön Kaput", "Sağ Ön Çamurluk"],
-                ["Sol Ön Kapı", "Tavan", "Sağ Ön Kapı"],
-                ["Sol Arka Kapı", "Bagaj Kapağı", "Sağ Arka Kapı"],
-                ["Sol Arka Çamurluk", "", "Sağ Arka Çamurluk"]
+            const sections = [
+                { title: "🚗 ÖN BÖLÜM", parts: ["Sol Ön Çamurluk", "Ön Kaput", "Sağ Ön Çamurluk"] },
+                { title: "🚙 ORTA KABİN", parts: ["Sol Ön Kapı", "Tavan", "Sağ Ön Kapı"] },
+                { title: "🚐 ARKA KABİN", parts: ["Sol Arka Kapı", "Bagaj Kapağı", "Sağ Arka Kapı"] },
+                { title: "🏁 ARKA BÖLÜM", parts: ["Sol Arka Çamurluk", "", "Sağ Arka Çamurluk"] }
             ];
 
-            rows.forEach(rowParts => {
-                const rowDiv = document.createElement("div");
-                rowDiv.className = "car-row";
-                
-                rowParts.forEach(partName => {
+            sections.forEach(sec => {
+                const titleEl = document.createElement("div");
+                titleEl.className = "car-section-title"; titleEl.innerText = sec.title; container.appendChild(titleEl);
+                const rowDiv = document.createElement("div"); rowDiv.className = "car-row";
+
+                sec.parts.forEach(partName => {
                     if (partName === "") {
-                        // Boşluk doldurucu
-                        const emptySpace = document.createElement("div");
-                        emptySpace.style.flex = "1";
-                        rowDiv.appendChild(emptySpace);
+                        const emptySpace = document.createElement("div"); emptySpace.style.flex = "1"; rowDiv.appendChild(emptySpace);
                         return;
                     }
-
                     const currentStatus = carPartsStatus[partName];
-                    const btn = document.createElement("button");
-                    btn.type = "button";
-                    
-                    let statusClass = "selected-orijinal";
-                    if (currentStatus === "Boyalı") statusClass = "selected-boyali";
-                    if (currentStatus === "Değişen") statusClass = "selected-degisen";
-
+                    const btn = document.createElement("button"); btn.type = "button";
+                    let statusClass = currentStatus === "Boyalı" ? "selected-boyali" : currentStatus === "Değişen" ? "selected-degisen" : "selected-orijinal";
                     btn.className = `car-part-btn ${statusClass}`;
-                    btn.innerHTML = `${partName}<br><span style="font-size:0.65rem; opacity:0.8;">(${currentStatus})</span>`;
-                    
+                    btn.innerHTML = `${partName}<br><span style="font-size:0.62rem;">(${currentStatus})</span>`;
                     btn.onclick = () => {
                         let nextIdx = (statuses.indexOf(carPartsStatus[partName]) + 1) % statuses.length;
                         carPartsStatus[partName] = statuses[nextIdx];
-                        renderCarParts();
+                        renderCarPartsForm();
                     };
                     rowDiv.appendChild(btn);
                 });
@@ -577,113 +587,182 @@
             const condition = document.getElementById("newCondition").value;
             const isPremium = currentUser.isPremium && document.getElementById("isPremium").checked;
 
-            let defaultImg = "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400";
-            if (category === "Vasıta") defaultImg = "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400";
-            if (category === "Ev Eşyası") defaultImg = "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400";
+            let images = selectedListingImages.length > 0 ? [...selectedListingImages] : [category === "Vasıta" ? "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=400" : "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400"];
 
             const newListing = {
-                id: Date.now(),
-                title,
-                category,
-                price,
-                location,
-                condition,
-                isPremium,
-                user: currentUser.name,
-                email: currentUser.email,
-                parts: category === "Vasıta" ? {...carPartsStatus} : null,
-                image: defaultImg
+                id: Date.now(), title, category, price, location, condition, isPremium,
+                user: currentUser.name, email: currentUser.email, phone: currentUser.phone, iban: currentUser.iban,
+                parts: category === "Vasıta" ? {...carPartsStatus} : null, images
             };
 
             listings.unshift(newListing);
             closeModal('listing-modal');
-            renderListings();
-            renderAdminTables();
-            alert(isPremium ? "Premium ilanınız süresiz ve en üstte yayınlandı!" : "İlanınız başarıyla yayınlandı.");
+            switchView('home');
+            alert("İlanınız başarıyla yayınlandı!");
         }
 
-        function renderAdminTables() {
-            const userTbody = document.getElementById("adminUsersTableBody");
-            userTbody.innerHTML = "";
-            users.forEach(u => {
-                let tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${u.name}</td>
-                    <td>${u.email}</td>
-                    <td>${u.phone}</td>
-                    <td>${u.iban}</td>
-                    <td><span style="color: ${u.isPremium ? '#10b981' : u.premiumStatus === 'Beklemede' ? '#f59e0b' : '#9ca3af'}">${u.isPremium ? '👑 Premium (Aktif)' : u.premiumStatus === 'Beklemede' ? '⏳ 50 TL Ödeme Bekliyor' : 'Standart'}</span></td>
-                    <td>${!u.isPremium ? `<button class="btn-success" onclick="approveUser('${u.email}')">50 TL Onayla & Premium Yap</button>` : 'Onaylı'}</td>
-                `;
-                userTbody.appendChild(tr);
-            });
-
-            const listingTbody = document.getElementById("adminListingsTableBody");
-            listingTbody.innerHTML = "";
-            listings.forEach(item => {
-                let tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${item.title}</td>
-                    <td>${item.category}</td>
-                    <td>${item.price}</td>
-                    <td>${item.user} (${item.email})</td>
-                    <td>${item.isPremium ? '👑 Premium' : 'Standart'}</td>
-                    <td><button class="btn-danger" onclick="deleteListing(${item.id})">Kaldır</button></td>
-                `;
-                listingTbody.appendChild(tr);
-            });
-        }
-
-        function approveUser(email) {
-            let targetUser = users.find(u => u.email === email);
-            if (targetUser) {
-                targetUser.isPremium = true;
-                targetUser.premiumStatus = "Onaylı";
-                alert(`${targetUser.name} adlı kullanıcının 50 TL yıllık ödemesi onaylandı ve hesabı Premium yapıldı!`);
-                renderAdminTables();
-                renderListings();
+        function toggleFavorite(id, event) {
+            event.stopPropagation();
+            const index = favorites.indexOf(id);
+            if (index > -1) {
+                favorites.splice(index, 1);
+            } else {
+                favorites.push(id);
             }
+            renderListings();
+            renderMyListings();
+            renderFavorites();
         }
 
-        function deleteListing(id) {
-            listings = listings.filter(item => item.id !== id);
-            renderListings();
-            renderAdminTables();
+        function openDetailModal(id) {
+            const item = listings.find(l => l.id === id);
+            if (!item) return;
+
+            let imagesHtml = item.images.map(img => `<img src="${img}" alt="İlan Görseli">`).join('');
+            
+            let partsHtml = "";
+            if (item.parts) {
+                let partsRows = "";
+                for (let [part, status] of Object.entries(item.parts)) {
+                    let badgeClass = status === "Boyalı" ? "selected-boyali" : status === "Değişen" ? "selected-degisen" : "selected-orijinal";
+                    partsRows += `<div style="display:flex; justify-content:space-between; padding:4px 8px; border-bottom:1px solid #334155; font-size:0.8rem;"><span>${part}</span><span style="font-weight:bold; padding:2px 6px; border-radius:4px;" class="${badgeClass}">${status}</span></div>`;
+                }
+                partsHtml = `
+                    <div style="margin-top:1rem;">
+                        <strong>🚗 3D Araç Ekspertiz Raporu:</strong>
+                        <div style="background:#0f172a; color:white; padding:10px; border-radius:8px; margin-top:5px;">${partsRows}</div>
+                    </div>
+                `;
+            }
+
+            document.getElementById("detailContent").innerHTML = `
+                <h2 style="color:var(--primary); margin-bottom:0.5rem;">${item.title}</h2>
+                <div style="font-size:1.4rem; font-weight:bold; color:var(--primary); margin-bottom:1rem;">${item.price}</div>
+                <div class="detail-gallery">${imagesHtml}</div>
+                <div style="display:flex; gap:1.5rem; font-size:0.9rem; color:var(--text-muted); margin-bottom:1rem;">
+                    <span>📍 Konum: <strong>${item.location}</strong></span>
+                    <span>📂 Kategori: <strong>${item.category}</strong></span>
+                    <span>⚙️ Durum: <strong>${item.condition || 'Belirtilmemiş'}</strong></span>
+                </div>
+                ${partsHtml}
+                <div class="seller-card">
+                    <h3 style="font-size:1rem; margin-bottom:0.5rem; color:var(--primary);">👤 Satıcı Bilgileri ve İletişim</h3>
+                    <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>İlan Sahibi:</strong> ${item.user}</p>
+                    <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>Telefon:</strong> <a href="tel:${item.phone}" style="color:var(--primary);">${item.phone || 'Belirtilmemiş'}</a></p>
+                    <p style="font-size:0.85rem; margin-bottom:0.3rem;"><strong>E-posta:</strong> ${item.email}</p>
+                    <p style="font-size:0.85rem; margin-bottom:0.8rem;"><strong>IBAN (Ödeme için):</strong> ${item.iban || 'Belirtilmemiş'}</p>
+                    
+                    <div style="margin-top:1rem; border-top:1px solid var(--border); padding-top:0.8rem;">
+                        <label style="font-size:0.85rem; font-weight:bold; display:block; margin-bottom:0.3rem;">💬 Satıcıya Mesaj Gönder / Soru Sor</label>
+                        <textarea id="buyerMessageInput" placeholder="Satıcıya bu ilanla ilgili soru sorun..." style="width:100%; padding:0.5rem; border:1px solid var(--border); border-radius:6px; font-size:0.85rem; height:60px; outline:none;"></textarea>
+                        <button class="btn" onclick="sendBuyerMessage('${item.email}')" style="margin-top:0.5rem; padding:0.4rem 1rem; font-size:0.8rem;">Mesaj Gönder</button>
+                    </div>
+                </div>
+            `;
+            openModal('detail-modal');
+        }
+
+        function sendBuyerMessage(ownerEmail) {
+            const msg = document.getElementById("buyerMessageInput").value;
+            if (!msg.trim()) { alert("Lütfen bir mesaj yazın!"); return; }
+            alert(`Mesajınız ${ownerEmail} adresine başarıyla iletildi! Satıcı size telefon veya e-posta yoluyla dönüş yapacaktır.`);
+            closeModal('detail-modal');
+        }
+
+        function deleteMyListing(id, event) {
+            event.stopPropagation();
+            if (confirm("Bu ilanı kalıcı olarak kaldırmak istediğinize emin misiniz?")) {
+                listings = listings.filter(l => l.id !== id);
+                renderListings();
+                renderMyListings();
+            }
         }
 
         function renderListings() {
             const grid = document.getElementById("listingsGrid");
             grid.innerHTML = "";
+            let sorted = [...listings].sort((a, b) => (b.isPremium === true) - (a.isPremium === true));
 
-            let sortedListings = [...listings].sort((a, b) => (b.isPremium === true) - (a.isPremium === true));
-
-            const filtered = sortedListings.filter(item => {
-                return item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                       item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                       item.category.toLowerCase().includes(searchQuery.toLowerCase());
-            });
+            const filtered = sorted.filter(item => 
+                item.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                item.category.toLowerCase().includes(searchQuery.toLowerCase())
+            );
 
             filtered.forEach(item => {
+                const isFav = favorites.includes(item.id);
                 const card = document.createElement("div");
                 card.className = `listing-card ${item.isPremium ? 'premium' : ''}`;
-                
-                let partsHtml = "";
-                if (item.parts) {
-                    partsHtml = `<div style="font-size:0.75rem; background:#f1f5f9; padding:0.4rem; border-radius:4px; margin-top:0.4rem;"><strong>Ekspertiz:</strong> Kaput: ${item.parts["Ön Kaput"]} | Tavan: ${item.parts["Tavan"]} | Sol Yan: ${item.parts["Sol Ön Kapı"]}</div>`;
-                }
+                card.onclick = () => openDetailModal(item.id);
 
                 card.innerHTML = `
                     ${item.isPremium ? '<div class="premium-badge">👑 PREMİUM</div>' : ''}
-                    <img src="${item.image}" alt="${item.title}">
+                    <button class="fav-btn" onclick="toggleFavorite(${item.id}, event)">${isFav ? '❤️' : '🤍'}</button>
+                    <img src="${item.images[0]}" alt="${item.title}">
                     <div class="listing-body">
                         <div class="listing-title">${item.title}</div>
                         <div class="listing-price">${item.price}</div>
-                        <div style="font-size:0.85rem; color:var(--text-muted);">${item.condition}</div>
-                        ${partsHtml}
                         <div class="listing-footer">
                             <span>${item.location}</span>
-                            <span>İsteyen: ${item.user}</span>
+                            <span>${item.user}</span>
                         </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderMyListings() {
+            const grid = document.getElementById("myListingsGrid");
+            grid.innerHTML = "";
+            if (!currentUser) return;
+
+            const myList = listings.filter(item => item.email === currentUser.email);
+            if (myList.length === 0) {
+                grid.innerHTML = `<p style="color:var(--text-muted);">Henüz eklediğiniz bir ilan bulunmuyor.</p>`;
+                return;
+            }
+
+            myList.forEach(item => {
+                const card = document.createElement("div");
+                card.className = `listing-card`;
+                card.onclick = () => openDetailModal(item.id);
+
+                card.innerHTML = `
+                    <button class="btn-danger" onclick="deleteMyListing(${item.id}, event)" style="position:absolute; top:10px; right:10px; z-index:10;">İlanı Kaldır</button>
+                    <img src="${item.images[0]}" alt="${item.title}">
+                    <div class="listing-body">
+                        <div class="listing-title">${item.title}</div>
+                        <div class="listing-price">${item.price}</div>
+                        <div class="listing-footer"><span>${item.location}</span><span>Kategori: ${item.category}</span></div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderFavorites() {
+            const grid = document.getElementById("favoritesGrid");
+            grid.innerHTML = "";
+            const favList = listings.filter(item => favorites.includes(item.id));
+
+            if (favList.length === 0) {
+                grid.innerHTML = `<p style="color:var(--text-muted);">Henüz favorilere eklediğiniz ilan yok.</p>`;
+                return;
+            }
+
+            favList.forEach(item => {
+                const card = document.createElement("div");
+                card.className = `listing-card ${item.isPremium ? 'premium' : ''}`;
+                card.onclick = () => openDetailModal(item.id);
+
+                card.innerHTML = `
+                    <button class="fav-btn" onclick="toggleFavorite(${item.id}, event)">❤️</button>
+                    <img src="${item.images[0]}" alt="${item.title}">
+                    <div class="listing-body">
+                        <div class="listing-title">${item.title}</div>
+                        <div class="listing-price">${item.price}</div>
+                        <div class="listing-footer"><span>${item.location}</span><span>${item.user}</span></div>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -700,7 +779,20 @@
                 adminPanel.style.display = "none";
                 searchQuery = value;
             }
-            renderListings();
+            switchView('home');
+        }
+
+        function renderAdminTables() {
+            const userTbody = document.getElementById("adminUsersTableBody");
+            userTbody.innerHTML = "";
+            users.forEach(u => {
+                userTbody.innerHTML += `<tr><td>${u.name}</td><td>${u.email}</td><td>${u.phone}</td><td>${u.iban}</td><td>${u.isPremium ? 'Premium' : 'Normal'}</td><td>Onaylı</td></tr>`;
+            });
+            const listingTbody = document.getElementById("adminListingsTableBody");
+            listingTbody.innerHTML = "";
+            listings.forEach(item => {
+                listingTbody.innerHTML += `<tr><td>${item.title}</td><td>${item.category}</td><td>${item.price}</td><td>${item.user}</td><td><button class="btn-danger" onclick="deleteMyListing(${item.id}, event)">Kaldır</button></td></tr>`;
+            });
         }
 
         renderListings();
