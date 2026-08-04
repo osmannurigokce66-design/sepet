@@ -20,15 +20,13 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); }
 
-        /* --- ÜST HEADER & ÖZEL LOGO --- */
+        /* --- ÜST HEADER & YENİ LOGO --- */
         header { background-color: var(--card-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
         .header-top { max-width: 1200px; margin: 0 auto; padding: 0.8rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
         
-        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; }
-        .site-logo-icon { width: 40px; height: 40px; background: #0f172a; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.15); }
-        .site-logo-icon svg { width: 22px; height: 22px; fill: white; }
-        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; }
-        .logo-text span { color: var(--accent); }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; cursor: pointer; }
+        .site-logo-img { height: 45px; width: auto; object-fit: contain; }
+        .logo-text { font-size: 1.6rem; font-weight: 800; color: var(--primary); letter-spacing: -1px; display: none; } /* Metin logoda zaten olduğu için gizlendi, dilerseniz açabilirsiniz */
 
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-link { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: color 0.2s; position: relative; }
@@ -335,12 +333,7 @@
     <header>
         <div class="header-top">
             <a class="logo-container" onclick="switchView('home')">
-                <div class="site-logo-icon">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.59 1.38 5.09L2 22l4.91-1.38C8.41 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/>
-                    </svg>
-                </div>
-                <div class="logo-text">Pazar<span>Sepeti</span></div>
+                <img src="19564.png" alt="PazarSepeti Logo" class="site-logo-img">
             </a>
             
             <nav class="nav-links">
