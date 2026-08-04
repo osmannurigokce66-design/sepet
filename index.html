@@ -285,7 +285,7 @@
         </div>
     </div>
 
-    <!-- 3.B İLAN KALDIRMA (NORMAL VEYA SATILDI SEÇENEĞİ) MODALI -->
+    <!-- 3.B İLAN KALDIRMA MODALI -->
     <div id="remove-choice-modal" class="modal">
         <div class="modal-box" style="max-width: 450px; text-align: center;">
             <button onclick="closeModal('remove-choice-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
@@ -304,7 +304,7 @@
         <div class="modal-box" style="max-width: 480px; text-align: center;">
             <button onclick="closeModal('sold-receipt-modal')" style="position:absolute; top:15px; right:15px; background:none; border:none; font-size:1.2rem; cursor:pointer;">✕</button>
             <h2>🤝 Satış Teyidi ve Dekont</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Satış işleminin gerçekleştiğini doğrulamak ve paranın gönderildiğini/alındığını kanıtlamak için lütfen ödeme dekontunu yükleyin.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Satış işleminin gerçekleştiğini doğrulamak için lütfen ödeme dekontunu yükleyin.</p>
             
             <div class="form-group" style="text-align: left;">
                 <label>Satış Dekontu / Transfer Kanıtı Görseli</label>
@@ -331,12 +331,11 @@
         </div>
     </div>
 
-    <!-- ÜST HEADER (YENİLENEN LOGO İLE) -->
+    <!-- ÜST HEADER -->
     <header>
         <div class="header-top">
             <a class="logo-container" onclick="switchView('home')">
                 <div class="site-logo-icon">
-                    <!-- Kullanıcının sağladığı mesaja ve site temasına göre optimize edilmiş logo ikonu -->
                     <svg viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.59 1.38 5.09L2 22l4.91-1.38C8.41 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm1 14h-2v-2h2v2zm0-4h-2V7h2v5z"/>
                     </svg>
@@ -398,7 +397,7 @@
         </div>
     </div>
 
-    <!-- GERÇEK ÇALIŞAN YARDIM BOTU WIDGET -->
+    <!-- GELİŞTİRİLMİŞ CANLI DESTEK ASİSTANI WIDGET -->
     <div class="bot-widget-btn" onclick="toggleBotWindow()" title="Destek Asistanı">💬</div>
     <div class="bot-window" id="botWindow">
         <div class="bot-header">
@@ -419,7 +418,7 @@
         let selectedListingImages = [];
         let activeChatId = null;
         let searchQuery = "";
-        let listingToDeleteId = null; // Silinecek veya satılacak geçici ilan ID
+        let listingToDeleteId = null;
 
         let favorites = JSON.parse(localStorage.getItem("pazar_favorites")) || [];
         
@@ -436,7 +435,7 @@
                 senderEmail: "ahmet@mail.com",
                 senderName: "Ahmet Yılmaz",
                 messages: [
-                    { sender: "ahmet@mail.com", text: "Merhaba, IBAN'a parayı gönderdim, dekontu paylaşıyorum.", time: "04.08.2026 12:30" }
+                    { sender: "ahmet@mail.com", text: "Merhaba, IBAN'a parayı gönderdim, dekontu paylaşıyorum.", time: "12:30" }
                 ]
             }
         ];
@@ -629,7 +628,6 @@
             document.getElementById("galleryPreviewContainer").innerHTML = "";
             document.getElementById("hiddenFileinput").value = "";
             
-            // Otomatik kullanıcının IBAN'ını doldur
             if (currentUser.iban) {
                 document.getElementById("newIban").value = currentUser.iban;
             }
@@ -1000,7 +998,6 @@
             }
         }
 
-        // --- İLAN KALDIRMA VE SATIŞ SÜRECİ ---
         function promptRemoveListing(id, event) {
             event.stopPropagation();
             listingToDeleteId = id;
@@ -1038,12 +1035,12 @@
             alert("Tebrikler! İlan 'Satıldı' olarak işaretlendi ve sistemden başarıyla kaldırıldı.");
         }
 
-        // --- YARDIM BOTU MANTIĞI ---
         function toggleBotWindow() {
             const win = document.getElementById("botWindow");
             win.classList.toggle("show");
         }
 
+        // --- CANLI ASİSTAN (DOĞRU VE KAPSAMLI YANIT SİSTEMİ) ---
         function sendBotMessage() {
             const input = document.getElementById("botInputText");
             const text = input.value.trim();
@@ -1051,24 +1048,28 @@
 
             const container = document.getElementById("botMessagesContainer");
             
-            // Kullanıcı mesajı
             container.innerHTML += `<div class="bot-bubble outgoing">${text}</div>`;
             input.value = "";
             container.scrollTop = container.scrollHeight;
 
-            // Bot yanıtı hesaplama (akıllı yanıt sistemi)
             setTimeout(() => {
-                let reply = "Bu konuda size yardımcı olabilirim. Lütfen detaylı bilgi için iletişim sayfasını kullanın veya menüden ilgili sekmeyi seçin.";
+                let reply = "Bu konuda size yardımcı olabilirim. Lütfen detaylı bilgi için üst menüdeki sekmeleri kullanın veya sorunuzu farklı bir şekilde sorun.";
                 const lower = text.toLowerCase();
 
-                if (lower.includes("ilan") && (lower.includes("nasıl") || lower.includes("ver"))) {
-                    reply = "Üst menüden '+ İlan Ver' butonuna tıklayarak kategori seçip kolayca ilan yayınlayabilirsiniz.";
-                } else if (lower.includes("iban") || lower.includes("para") || lower.includes("satış")) {
-                    reply = "Satışlar için ilanlara IBAN eklenmektedir. Alıcı satıcının IBAN'ına gönderim yapar, ardından 'İlanı Kaldır' menüsünden 'Satıldı' seçilerek dekont ibraz edilir.";
-                } else if (lower.includes("premium") || lower.includes("ücret")) {
-                    reply = "Premium ilanlar yıllık 50 TL'dir. İlan verirken 'Premium İlan Yap' kutucuğunu işaretleyerek havale dekontuyla hesabınızı yükseltebilirsiniz.";
-                } else if (lower.includes("merhaba") || lower.includes("selam")) {
-                    reply = "Merhaba! PazarSepeti destek hattına hoş geldiniz. Size nasıl yardımcı olabilirim?";
+                if (lower.includes("ilan") && (lower.includes("nasıl") || lower.includes("ver") || lower.includes("ekle"))) {
+                    reply = "Üst menüde yer alan sağ üst köşedeki **'+ İlan Ver'** butonuna tıklayarak kategori seçip (Vasıta, Elektronik, Ev Eşyası, Emlak), fotoğraf ekleyip kolayca ilan yayınlayabilirsiniz.";
+                } else if (lower.includes("iban") || lower.includes("para") || lower.includes("ödeme") || lower.includes("havale")) {
+                    reply = "Alım-satım işlemlerinde ödemeler doğrudan ilan sahibinin belirttiği kişisel IBAN numarasına yapılır. Alıcı, ilandaki IBAN'a ödemeyi gönderdikten sonra satıcı ile sohbet üzerinden dekont paylaşabilir.";
+                } else if (lower.includes("premium") || lower.includes("ücret") || lower.includes("yıllık")) {
+                    reply = "Premium ilan ve üyelik yıllık 50 TL'dir. İlan verme ekranındayken **'👑 Premium İlan Yap'** kutucuğunu işaretleyebilir, açılan havale ekranına ücreti gönderip dekont yükleyerek hesabınızı veya ilanınızı Premium statüsüne yükseltebilirsiniz.";
+                } else if (lower.includes("satıldı") || lower.includes("kaldır") || lower.includes("sil")) {
+                    reply = "Kendi eklediğiniz ilanları kaldırmak için 'İlanlarım' sekmesinden ilanınızın üzerindeki **'İlanı Kaldır'** butonuna tıklayabilirsiniz. Ürününüz satıldıysa 'Satıldığı İçin İlandan Kaldırıyorum' seçeneğini seçip transfer/satış dekontunu yükleyerek ilanı başarıyla kapatabilirsiniz.";
+                } else if (lower.includes("ekspertiz") || lower.includes("araç") || lower.includes("parça") || lower.includes("boyalı") || lower.includes("değişen")) {
+                    reply = "Vasıta kategorisinde ilan verirken 3D araç şeması üzerinden parçalara tıklayarak parça durumlarını 'Orijinal', 'Boyalı' veya 'Değişen' olarak detaylı şekilde işaretleyebilir, alıcılara ekspertiz raporu sunabilirsiniz.";
+                } else if (lower.includes("şifre") || lower.includes("giriş") || lower.includes("kayıt")) {
+                    reply = "PazarSepeti platformuna giriş yapmak veya kayıt olmak için üst menüdeki **'Giriş / Kayıt Ol'** butonunu kullanabilirsiniz. Kayıt olurken ad-soyad, e-posta, telefon ve IBAN bilgileriniz alınır.";
+                } else if (lower.includes("merhaba") || lower.includes("selam") || lower.includes("hey")) {
+                    reply = "Merhaba! PazarSepeti canlı destek hattına hoş geldiniz. İlan verme, IBAN ödemeleri, premium üyelik veya site kullanımı hakkında merak ettiklerinizi bana sorabilirsiniz!";
                 }
 
                 container.innerHTML += `<div class="bot-bubble incoming">${reply}</div>`;
